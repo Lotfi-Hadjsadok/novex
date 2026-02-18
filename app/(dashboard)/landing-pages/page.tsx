@@ -1,6 +1,10 @@
+import { Suspense } from "react";
+import { getLandingPageFormOptions } from "@/app/actions/landing-page";
 import { LandingPageGeneratorForm } from "@/components/landing-page/landing-page-generator-form";
 
 export default function LandingPagesPage() {
+  const optionsPromise = getLandingPageFormOptions();
+
   return (
     <div className="space-y-8">
       <div className="space-y-1">
@@ -8,10 +12,12 @@ export default function LandingPagesPage() {
           Landing Pages
         </h1>
         <p className="max-w-xl text-muted-foreground">
-          Generate a 3-section landing page from product images. Get copy, features, and a ready-to-use preview—or export as image.
+          Generate a landing page from product images. The output is an image.
         </p>
       </div>
-      <LandingPageGeneratorForm />
+      <Suspense fallback={<div className="text-muted-foreground">Loading form…</div>}>
+        <LandingPageGeneratorForm optionsPromise={optionsPromise} />
+      </Suspense>
     </div>
   );
 }

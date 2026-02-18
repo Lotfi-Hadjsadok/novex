@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
-    "@langchain/core": "^1.1.24",
+    "@langchain/core": "^1.1.26",
+    "@langchain/google": "^0.1.1",
     "@langchain/langgraph": "^1.1.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -20,6 +21,8 @@
     "next": "16.1.6",
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "19.2.3",
     "shadcn": "^3.8.5",
     "tailwind-merge": "^3.4.1",

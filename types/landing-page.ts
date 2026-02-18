@@ -1,5 +1,5 @@
 export type CopyLanguage = "en" | "fr" | "ar";
-export type ArabicDialect = "algerian" | "tunisian" | "moroccan";
+export type ArabicDialect = "standard" | "algerian" | "tunisian" | "moroccan";
 
 export interface FeatureItem {
   visual?: string;
