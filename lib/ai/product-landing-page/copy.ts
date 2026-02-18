@@ -1,8 +1,8 @@
-import { ArabicDialect, CopyLanguage, ImageData } from "@/types/landing-page";
+import { ArabicDialect, CopyLanguage } from "@/types/landing-page";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { ChatGoogle } from "@langchain/google";
 import { z } from "zod";
-import { fileToBase64 } from "../utils";
+import { fileToBase64 } from "../../utils";
 
 export const COPY_RULES = {
   tag: "Short product tag or category label; keep minimal. Use empty string if none.",
@@ -75,7 +75,7 @@ export const adCopyOutputSchema = z.object({
 
 
 
-export async function generateAdCopy(
+export async function generateCopy(
   language:CopyLanguage,
   dialect:ArabicDialect,
   price:string,
