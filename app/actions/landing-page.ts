@@ -1,24 +1,27 @@
 "use server";
 
-import type { ArabicDialect, CopyLanguage } from "@/types/landing-page";
+import { adCopyOutputSchema, adCopySystemPrompt, adCopyUserPrompt, generateAdCopy } from "@/lib/ai/ad-copy";
+import { fileToBase64 } from "@/lib/utils";
+import type { ArabicDialect, CopyLanguage, ImageData } from "@/types/landing-page";
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { ChatGoogle } from "@langchain/google";
+import { ChatPromptTemplate } from "@langchain/core/prompts";
 
-export type FormOptions = {
-  languages: { value: CopyLanguage; label: string }[];
-  arabicDialects: { value: ArabicDialect; label: string }[];
-};
 
-export async function getLandingPageFormOptions(): Promise<FormOptions> {
-  return {
-    languages: [
-      { value: "en", label: "English" },
-      { value: "fr", label: "French" },
-      { value: "ar", label: "Arabic" },
-    ],
-    arabicDialects: [
-      { value: "standard", label: "Standard" },
-      { value: "algerian", label: "Algerian" },
-      { value: "tunisian", label: "Tunisian" },
-      { value: "moroccan", label: "Moroccan" },
-    ],
-  };
+
+export async function generateLandingPage(
+  productImages: File[],
+  language: CopyLanguage,
+  dialect: ArabicDialect,
+  productName: string,
+  price: string
+) {
+
+ 
+
+  const copy = await generateAdCopy(language, dialect, price, productName, productImages);
+
+  console.log(copy);
+
+  // TODO: Use `copy` together with `images`, `language`, `dialect`, and `price` to build and return the full landing page state.
 }

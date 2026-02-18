@@ -1,8 +1,26 @@
 export type CopyLanguage = "en" | "fr" | "ar";
 export type ArabicDialect = "standard" | "algerian" | "tunisian" | "moroccan";
 
+export interface ImageData {
+  type: "image_url";
+  image_url: { url: string };
+}
+
+export const LANGUAGES: { value: CopyLanguage; label: string }[] = [
+  { value: "en", label: "English" },
+  { value: "fr", label: "French" },
+  { value: "ar", label: "Arabic" },
+];
+
+export const ARABIC_DIALECTS: { value: ArabicDialect; label: string }[] = [
+  { value: "standard", label: "Standard" },
+  { value: "algerian", label: "Algerian" },
+  { value: "tunisian", label: "Tunisian" },
+  { value: "moroccan", label: "Moroccan" },
+];
+
 export interface FeatureItem {
-  visual?: string;
+  visual?: ImageData;
   text: string;
   description?: string;
 }
@@ -60,9 +78,8 @@ export interface CreativeResult {
   section_3?: CreativeSpecSection;
 }
 
-/** State for the landing page generator (input + output). */
 export interface LandingPageState {
-  productImageUrls: string[];
+  productImages: ImageData[];
   language: CopyLanguage;
   dialect?: ArabicDialect;
   userFeatures?: string[];
@@ -70,9 +87,8 @@ export interface LandingPageState {
   copy?: CopyResult;
   features?: FeaturesResult;
   creative?: CreativeResult;
-  generatedSectionImageUrls?: [string?, string?, string?];
+  generatedSectionImages?: [ImageData?, ImageData?, ImageData?];
   error?: string;
 }
 
-/** Alias for components that expect the same shape. */
 export type LandingPageGraphState = LandingPageState;

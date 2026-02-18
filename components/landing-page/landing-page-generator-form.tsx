@@ -1,8 +1,12 @@
 "use client";
 
-import { use, useState } from "react";
-import type { ArabicDialect, CopyLanguage } from "@/types/landing-page";
-import type { FormOptions } from "@/app/actions/landing-page";
+import { useTransition, useState, type SubmitEventHandler } from "react";
+import {
+  ARABIC_DIALECTS,
+  LANGUAGES,
+  type ArabicDialect,
+  type CopyLanguage,
+} from "@/types/landing-page";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,31 +32,40 @@ import {
   FieldTitle,
 } from "@/components/ui/field";
 import { ImagePicker } from "@/components/ui/image-picker";
+import { generateLandingPage } from "@/app/actions/landing-page";
 
-type Step = 1 | 2;
-
-export function LandingPageGeneratorForm({
-  optionsPromise,
-}: {
-  optionsPromise: Promise<FormOptions>;
-}) {
-  const options = use(optionsPromise);
-  const [step, setStep] = useState<Step>(1);
+export function LandingPageGeneratorForm() {
   const [productImages, setProductImages] = useState<File[]>([]);
   const [language, setLanguage] = useState<CopyLanguage>("en");
   const [dialect, setDialect] = useState<ArabicDialect>("standard");
+  const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
+  const [isPending, startTransition] = useTransition();
+ 
+  const handleSubmit: SubmitEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    startTransition(async () => {
+      await generateLandingPage(
+        productImages,
+        language,
+        dialect,
+        productName,
+        price
+      );
+    });
+  };
 
   return (
     <Card className="w-full max-w-lg">
       <CardHeader>
         <CardTitle>Landing page generator</CardTitle>
         <CardDescription>
-          Step {step} of 2 — {step === 1 ? "Products & language" : "Price"}
+          Add product name, images, language, and price to generate a landing
+          page.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {step === 1 && (
+      <form onSubmit={handleSubmit}>
+        <CardContent className="space-y-6">
           <FieldGroup>
             <Field>
               <FieldLabel>
@@ -77,7 +90,7 @@ export function LandingPageGeneratorForm({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {options.languages.map((opt) => (
+                  {LANGUAGES.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
                       {opt.label}
                     </SelectItem>
@@ -98,7 +111,7 @@ export function LandingPageGeneratorForm({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {options.arabicDialects.map((opt) => (
+                    {ARABIC_DIALECTS.map((opt) => (
                       <SelectItem key={opt.value} value={opt.value}>
                         {opt.label}
                       </SelectItem>
@@ -107,34 +120,36 @@ export function LandingPageGeneratorForm({
                 </Select>
               </Field>
             )}
+            <Field>
+              <FieldLabel>
+                <FieldTitle>Product name</FieldTitle>
+              </FieldLabel>
+              <Input
+                type="text"
+                placeholder="e.g. NovaX Pro Headphones"
+                value={productName}
+                onChange={(e) => setProductName(e.target.value)}
+              />
+            </Field>
+            <Field>
+              <FieldLabel>
+                <FieldTitle>Product price</FieldTitle>
+              </FieldLabel>
+              <Input
+                type="text"
+                placeholder="e.g. 29.99 USD"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+              />
+            </Field>
           </FieldGroup>
-        )}
-        {step === 2 && (
-          <Field>
-            <FieldLabel>
-              <FieldTitle>Product price</FieldTitle>
-            </FieldLabel>
-            <Input
-              type="text"
-              placeholder="e.g. 29.99 USD"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-          </Field>
-        )}
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        {step === 1 ? (
-          <Button onClick={() => setStep(2)}>Next</Button>
-        ) : (
-          <>
-            <Button variant="outline" onClick={() => setStep(1)}>
-              Back
-            </Button>
-            <Button type="submit">Generate</Button>
-          </>
-        )}
-      </CardFooter>
+        </CardContent>
+        <CardFooter>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? "Generating…" : "Generate"}
+          </Button>
+        </CardFooter>
+      </form>
     </Card>
   );
 }
