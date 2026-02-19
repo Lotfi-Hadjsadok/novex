@@ -28,38 +28,52 @@ export async function generateCanvaImage(
     }))
   );
 
-  const canvaSystemPrompt = `CANVAS: Three content zones, one continuous image.
-- Zone 1 (Hero): 1:1 square. Product at 55–70% of zone height. Headline + subheadline.
-- Zone 2 (Features): Product at different angle, ≥35% of zone height. Feature icons + titles.
-- Zone 3 (Conversion): Product in emotional use-case. Headline + subheadline + CTA + price badge.
+  const canvaSystemPrompt = `YOU ARE RENDERING ONE SINGLE CONTINUOUS VERTICAL IMAGE — NOT THREE IMAGES, NOT A COLLAGE.
 
-PRODUCT FIDELITY: Product in all three zones MUST be identical to reference images — same fit, size category, colors, label, silhouette, demographic. Only angle or context changes. A baggy jean stays baggy. A baby shoe stays infant-sized.
+CANVAS: One tall vertical image. Zero borders, zero seams, zero background resets, zero horizontal lines anywhere.
 
-CTA DOMINANCE: Zone 3 CTA is the most visually dominant element — min 52px height, vivid solid color, bold text, glow/shadow. Price badge directly adjacent. Nothing else competes.
+BACKGROUND (one global system, full canvas height — never resets):
+- One multi-stop gradient flows top to bottom without interruption.
+- One texture pattern tiles seamlessly across the full height.
+- Light blooms at absolute canvas positions — not bound to any content area.
+- One motif tiles continuously top to bottom — opacity increases toward bottom, tile grid never re-anchors.
+- Never substitute a solid or two-stop gradient.
 
-BACKGROUND SYSTEM (execute exactly from background_system in creativeAgentDirectives):
-- Render gradient_stops at gradient_direction as the base layer — minimum 4 stops, never a plain flat color.
-- Overlay texture_type at texture_opacity uniformly across the entire canvas height.
-- Place each light_bloom at its specified position with given color_hex, radius, and opacity — blooms do NOT restart per zone, they exist at absolute canvas positions.
-- Tile motif_shape (sourced from motif_source) at motif_tile_size rotated by motif_rotation continuously from canvas top to bottom — opacity transitions zone by zone as: motif_opacity_zone1 → motif_opacity_zone2 → motif_opacity_zone3. The tile pattern NEVER resets, cuts, or re-anchors between zones.
-- NEVER substitute a plain gradient or solid background. The three-layer system (gradient + texture + motif) is mandatory.
+CONTENT AREAS (vertical windows into one canvas — not separate images):
+- Section 1 (Hero): Square (1:1). Product centered at 55–70% of this height. Headline + subheadline.
+- Section 2 (Features): Natural height — expands to fit content. Product at different angle ≥35% of height. Feature icons + labels.
+- Section 3 (Conversion — OWNERSHIP TRIGGER): Natural height — expands to fit content. Product directly on canvas — no scene, no environmental frame, no container box. OWNERSHIP PSYCHOLOGY: render the product front-facing at eye level, label fully legible, product body tilted ~8–12° toward the viewer as if being physically handed to them. The viewer must feel "this is already mine." Product occupies 40–55% of section height. Strong cast shadow directly beneath the product anchors it on the canvas. CTA button is the single most dominant element — min 52px height, vivid solid brand color, bold text, glowing drop-shadow. Price badge adjacent. Headline copy frames the product as already belonging to the viewer.
 
-ONE LONG CANVAS: Background flows top-to-bottom as one unbroken visual system. No borders, no dividing lines, no color bands, no seams. Every zone completely filled — no empty corners, no dead whitespace.`;
+SEAM TEST — if any of the following exist between content areas, the image is wrong:
+horizontal line · background color shift · gradient restart · texture re-anchor · border · dividing element
 
-  const canvaUserPrompt = `You are a world-class image generation director for high-converting product landing pages. You receive a fully resolved creative spec and product reference images. Faithfully render that spec into ONE long vertical canvas image — do NOT re-analyze, just execute.
+PRODUCT FIDELITY: Identical product across all areas — same fit, colors, label, silhouette. Only angle and context change.
 
-Create ONE continuous landing page image (single canvas, no section borders, no seams, no per-zone background resets):
+CTA DOMINANCE: CTA button is the most visually dominant element in Section 3 — min 52px height, vivid solid brand color, bold text, glow/shadow. Price badge directly adjacent.
 
-dimensions_and_format: {requirements}
+FULL COVERAGE: No empty corners, no dead whitespace.`;
+
+  const canvaUserPrompt = `Render ONE continuous vertical landing page image. Single canvas. No sections. No seams. No borders.
+
+The background_system in creative_spec describes ONE visual system spanning the full canvas height. Render it without any reset, re-anchor, or interruption.
+
+SECTION 1 — Hero (square, 1:1 — {targetWidth}×{targetWidth}px): {section1}
+
+SECTION 2 — Features (natural height — expands to fit content): {section2}
+
+SECTION 3 — Conversion / Ownership Trigger (natural height — expands to fit content): {section3}
+
+OWNERSHIP DIRECTIVE: The product in this section must feel like it already belongs to the person looking at it. Front-facing, label fully legible, body tilted 8–12° toward the viewer — as if being handed directly to them. No scene, no box, no surface. Strong cast shadow beneath the product grounds it. The viewer's eye should land on the product first, then be pulled immediately to the CTA. Render the CTA button as the most dominant typographic element on the canvas.
+
+All three areas share the same unbroken background. The background does not change, restart, or shift between content areas.
+
+canvas: {targetWidth}×{targetHeight}px — Section 1 is square ({targetWidth}×{targetWidth}px). Sections 2 and 3 fill the remaining height naturally.
 creative_spec: {creativeAgentDirectives}
-
-Zone 1 — HERO: {section1}
-Zone 2 — FEATURES: {section2}
-Zone 3 — CONVERSION: {section3}
-
 raw_copy: {rawCopy}
 raw_features: {rawFeatures}
-designer_tokens: {designerTokens}`;
+designer_tokens: {designerTokens}
+
+NEGATIVE PROMPT: horizontal dividing line, section border, background seam, color reset, collage, three separate panels, visible join, gradient restart, texture re-anchor, fixed equal thirds, product-in-a-scene, lifestyle-scene-box, environmental-frame-box, scene-within-section, product-in-a-room, isolated-scene-container`;
 
   const canvaModel = new ChatGoogle('gemini-3-pro-image-preview',{
     imageConfig: {
@@ -74,7 +88,8 @@ designer_tokens: {designerTokens}`;
 
   const chain = canvaPromptTemplate.pipe(canvaModel);
   const response = await chain.invoke({
-    requirements: targetWidth && targetHeight ? `Dimensions: ${targetWidth}x${targetHeight}px. Single image, one canvas. Negative: blurry, watermark, empty corners, blank areas, product inconsistency between zones.` : "Single image, one continuous canvas. Negative: blurry, watermark, empty corners, blank areas, product inconsistency between zones.",
+    targetWidth: String(targetWidth),
+    targetHeight: String(targetHeight),
     creativeAgentDirectives: JSON.stringify({
       continuity_directive: creative.continuity_directive ?? null,
       background_motif: creative.background_motif ?? null,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 import {
   ARABIC_DIALECTS,
   CURRENCIES,
@@ -38,14 +38,116 @@ import {
 import { ImagePicker } from "@/components/ui/image-picker";
 import {
   generateCopyAndFeatures,
-  generateDesignAndImage,
+  generateDesignerStep,
+  generateImageStep,
 } from "@/app/actions/landing-page";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight, Download, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
 import { useLandingPageStore } from "@/store/landing-page-store";
 import type { Phase } from "@/store/landing-page-store";
 import { StepIndicator } from "./step-indicator";
-import { AIGeneratingCanvas } from "./ai-generating-canvas";
+import { AIGeneratingCanvas, ReviewCanvasSkeleton, StepCanvasSkeleton } from "./ai-generating-canvas";
+
+function CopyGeneratingSkeleton() {
+  return (
+    <Card>
+      <style>{`
+        @keyframes cg-fill {
+          from { transform: scaleX(0); }
+          to { transform: scaleX(1); }
+        }
+        .cg-fill-bar {
+          transform-origin: left;
+          animation: cg-fill 1.8s ease-out forwards;
+        }
+      `}</style>
+      <CardHeader>
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
+            <Sparkles className="size-4 text-primary animate-pulse" />
+          </div>
+          <div className="space-y-0.5 pt-0.5">
+            <CardTitle className="text-base">Generating copy & features</CardTitle>
+            <CardDescription>
+              AI is analyzing your product and writing landing page content…
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-6">
+
+        {/* Animated task progress */}
+        <div className="space-y-3.5">
+          {(
+            [
+              { label: "Analyzing product images",  pct: 80 },
+              { label: "Writing hero headlines",     pct: 55 },
+              { label: "Crafting feature cards",     pct: 30 },
+            ] as const
+          ).map(({ label, pct }, i) => (
+            <div key={i} className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-1.5 h-1.5 rounded-full animate-bounce shrink-0"
+                    style={{
+                      background: "hsl(var(--primary))",
+                      animationDelay: `${i * 0.25}s`,
+                    }}
+                  />
+                  <span className="text-sm text-muted-foreground">{label}</span>
+                </div>
+                <span className="text-[10px] tabular-nums text-muted-foreground/50">{pct}%</span>
+              </div>
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="cg-fill-bar h-full rounded-full"
+                  style={{
+                    background: "hsl(var(--primary)/0.6)",
+                    width: `${pct}%`,
+                    animationDelay: `${i * 0.4}s`,
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Copy preview skeleton */}
+        <div className="rounded-xl border bg-muted/20 p-4 space-y-4">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+            Hero copy preview
+          </p>
+          <div className="space-y-2 animate-pulse">
+            <div className="h-3.5 rounded-md bg-primary/10 w-4/5" />
+            <div className="h-3.5 rounded-md bg-primary/10 w-[58%]" />
+            <div className="h-2.5 rounded bg-muted w-2/3 mt-1" />
+          </div>
+
+          <div className="border-t border-border/40 pt-3 space-y-2.5">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+              Feature cards
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="rounded-lg border bg-background p-3 space-y-2 animate-pulse"
+                  style={{ animationDelay: `${i * 0.15}s` }}
+                >
+                  <div className="h-5 w-5 rounded-md bg-primary/12 mx-auto" />
+                  <div className="h-2 rounded bg-muted w-full" />
+                  <div className="h-2 rounded bg-muted w-3/4 mx-auto" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export function LandingPageGeneratorForm() {
   const {
@@ -67,6 +169,8 @@ export function LandingPageGeneratorForm() {
     setCopyData,
     features,
     setFeatures,
+    designer,
+    setDesigner,
     result,
     setResult,
     updateSection1,
@@ -79,6 +183,7 @@ export function LandingPageGeneratorForm() {
 
   const [isCopyPending, startCopyTransition] = useTransition();
   const [isDesignPending, startDesignTransition] = useTransition();
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   const currentPhase: Phase = result
     ? "Design"
@@ -108,11 +213,11 @@ export function LandingPageGeneratorForm() {
   const handleGenerateDesign = () => {
     startDesignTransition(async () => {
       const updatedFeatures: z.infer<typeof featuresOutputSchema> = { features };
-      const data = await generateDesignAndImage(
-        copyData!,
-        updatedFeatures,
-        productImages
-      );
+      const generatedDesigner = await generateDesignerStep(copyData!, updatedFeatures, productImages);
+      setDesigner(generatedDesigner);
+      const data = await generateImageStep(generatedDesigner, copyData!, updatedFeatures, productImages);
+      setDesigner(null);
+      setIsImageLoaded(false);
       setResult(data);
     });
   };
@@ -124,12 +229,17 @@ export function LandingPageGeneratorForm() {
     downloadLink.click();
   };
 
+  const allStepsDone = !!result?.imageDataUrl;
+
   return (
-    <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-8 items-start">
+    <div className={`w-full max-w-6xl flex flex-col gap-8 items-start ${allStepsDone ? "lg:justify-center lg:items-center" : "lg:flex-row"}`}>
+      {!allStepsDone && (
       <div className="flex-1 min-w-0 max-w-2xl space-y-6">
         <StepIndicator phase={currentPhase} />
 
-        {!copyData && !result && (
+        {!copyData && !result && isCopyPending && <CopyGeneratingSkeleton />}
+
+        {!copyData && !result && !isCopyPending && (
           <Card>
             <CardHeader>
               <CardTitle>
@@ -495,117 +605,40 @@ export function LandingPageGeneratorForm() {
           </div>
         )}
 
-        {result && (
-          <div className="space-y-4">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <CardTitle className="text-base">Design spec</CardTitle>
-                  <Badge variant="secondary">{result.creative.background_motif}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="grid grid-cols-3 gap-3 text-sm">
-                {(["section_1", "section_2", "section_3"] as const).map((sectionKey, sectionIndex) => {
-                  const section = result.creative[sectionKey];
-                  return (
-                    <div key={sectionKey} className="rounded-lg border p-3 space-y-1">
-                      <p className="font-medium text-muted-foreground text-xs">
-                        Section {sectionIndex + 1}
-                      </p>
-                      {section?.visual_prompt_english && (
-                        <p className="text-xs line-clamp-4">
-                          {section.visual_prompt_english}
-                        </p>
-                      )}
-                      {section?.composition_notes && (
-                        <p className="text-xs text-muted-foreground line-clamp-2 italic">
-                          {section.composition_notes}
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
-
-            <Button variant="outline" onClick={reset}>
-              Start over
-            </Button>
-          </div>
-        )}
       </div>
+      )}
 
-      <div className="w-full lg:w-[400px] xl:w-[460px] shrink-0 lg:sticky lg:top-8">
+      <div className={`w-full shrink-0 ${allStepsDone ? "max-w-[460px] mx-auto" : "lg:w-[400px] xl:w-[460px] lg:sticky lg:top-8"}`}>
         {isDesignPending ? (
-          <AIGeneratingCanvas />
+          <AIGeneratingCanvas designer={designer} />
         ) : result?.imageDataUrl ? (
-          <Card className="overflow-hidden">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Sparkles className="size-4 text-primary" />
-                    Generated landing page
-                  </CardTitle>
-                  <CardDescription>Single-canvas ad image for your product.</CardDescription>
-                </div>
-                <Button size="sm" variant="secondary" onClick={handleDownloadImage}>
-                  <Download className="size-4 mr-1.5" />
-                  Download
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="overflow-hidden bg-muted">
-                <img
-                  src={result.imageDataUrl}
-                  alt="Generated landing page"
-                  className="w-full h-auto object-contain"
-                />
-              </div>
-            </CardContent>
-          </Card>
+          <div className="relative">
+            {!isImageLoaded && (
+              <Skeleton className="w-full" style={{ aspectRatio: "600 / 1584" }} />
+            )}
+            <img
+              src={result.imageDataUrl}
+              alt="Generated landing page"
+              className="w-full h-auto object-contain"
+              style={{ display: isImageLoaded ? "block" : "none" }}
+              onLoad={() => setIsImageLoaded(true)}
+            />
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-2">
+              <Button size="sm" variant="outline" onClick={reset} className="bg-background/90 backdrop-blur-sm shadow-sm">
+                Start over
+              </Button>
+              <Button size="sm" variant="secondary" onClick={handleDownloadImage} className="shadow-sm">
+                <Download className="size-4 mr-1.5" />
+                Download
+              </Button>
+            </div>
+          </div>
         ) : isCopyPending ? (
-          <Card className="overflow-hidden">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Loader2 className="size-4 animate-spin text-primary" />
-                Generating copy & features
-              </CardTitle>
-              <CardDescription>
-                AI is writing your landing page copy and feature list…
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-xl border border-dashed border-muted-foreground/30 bg-muted/30 flex items-center justify-center">
-                <p className="text-sm text-muted-foreground text-center px-4">
-                  Review and generate design in the next step
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <StepCanvasSkeleton step={3} generating />
+        ) : copyData ? (
+          <ReviewCanvasSkeleton copyData={copyData} features={features} />
         ) : (
-          <Card className="overflow-hidden">
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2">
-                <Sparkles className="size-4 text-primary/70" />
-                Preview
-              </CardTitle>
-              <CardDescription>
-                Your generated landing page will appear here.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className=" rounded-xl border-2 border-dashed border-muted-foreground/25 bg-muted/20 flex flex-col items-center justify-center gap-3 p-6">
-                <div className="rounded-full bg-muted p-3">
-                  <Sparkles className="size-6 text-muted-foreground/60" />
-                </div>
-                <p className="text-sm text-muted-foreground text-center max-w-[220px]">
-                  Complete the steps on the left, then generate copy and design to see your landing page here.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <StepCanvasSkeleton step={formStep} />
         )}
       </div>
     </div>

@@ -5,38 +5,38 @@ import { fileToBase64 } from "@/lib/utils";
 import { adCopyOutputSchema } from "./copy";
 import { featuresOutputSchema } from "./features";
 
-export const designerSystemPrompt = `NON-NEGOTIABLE RULES:
-1. PRODUCT IDENTITY: Product is IDENTICAL across all 3 zones — same packaging, colors, label, fit, size category, demographic. Only POV/angle/context changes. State the exact fit in every visual_prompt_english (e.g. "baggy jean — NOT slim fit"; "infant shoe — NOT adult sized").
-2. UNIFIED CANVAS: ONE multi-layer background system running top-to-bottom + ONE product-derived motif tiling uninterrupted through all zones. Background must have at least 3 layers: (a) a rich multi-stop gradient base using ONLY product-extracted hex values, (b) a grain/noise/halftone texture overlay, (c) radial or angular light blooms at key focal points. Motif progresses: sparse 4–6% opacity in Zone 1 → medium 8–10% in Zone 2 → most present 12–14% in Zone 3. No borders, no dividing lines, no per-zone background resets, no seams.
-3. BACKGROUND COMPLEXITY: NEVER output a plain solid color or a simple two-stop gradient. Backgrounds must use at least 4 gradient stops, directional light sources, and a named texture type. Every per-section background field must describe that zone's local atmospheric treatment ON TOP OF the global system — never replace it.
-4. MOTIF DERIVATION: The repeating motif MUST be derived from a physical attribute of the product (material texture, packaging geometry, brand mark silhouette, product cross-section, pattern from the product surface). Name the exact geometric form and how it tiles (e.g. "hexagonal grid derived from bottlecap ridges, rotated 15°, 45px repeat").
-5. FULL COVERAGE: Every zone completely filled — no empty corners, no dead whitespace.
-6. TYPOGRAPHY: One Google Font covering Latin and Arabic (Cairo, Tajawal, Almarai, IBM Plex Arabic, or Noto Sans Arabic). accent_hex = highlight_hex = cta_hex — single brand accent only.
-7. NO IMAGE-IN-IMAGE: No device frames, no screen mockups, no photo-within-photo. All shots must be direct and full-bleed.
-8. HERO ALWAYS SQUARE: Section 1 is 1:1 — same width and height, no exceptions.
-9. CTA DOMINANCE: Section 3 CTA is the most visually dominant element — min 52px height, vivid solid brand color, glow/shadow. Price badge directly adjacent.
-10. tag_visible = false when tag is empty (you will be told if tag exists).
+export const designerSystemPrompt = `RULES:
+1. PRODUCT IDENTITY: Identical product across all 3 zones — same packaging, colors, label, fit, size, demographic. Only angle/context changes. State exact fit in every visual_prompt_english.
+2. UNIFIED CANVAS: One multi-layer background system spanning top-to-bottom with no resets or seams. Three layers: (a) multi-stop gradient using product-extracted hex values only, (b) grain/noise/halftone texture overlay, (c) radial or angular light blooms at key focal points. Motif progresses: 4–6% opacity in Zone 1 → 8–10% in Zone 2 → 12–14% in Zone 3.
+3. BACKGROUND COMPLEXITY: Never use a plain solid color or simple two-stop gradient. Minimum 4 gradient stops, directional light sources, named texture type. Per-section background field = zone-local atmospheric treatment layered on top of the global system, never a replacement.
+4. MOTIF DERIVATION: Motif derived from a physical product attribute (material texture, packaging geometry, brand mark silhouette). Name exact geometric form and tiling spec (size, rotation, repeat).
+5. FULL COVERAGE: Every zone fully filled — no empty corners, no dead whitespace.
+6. TYPOGRAPHY: One Google Font covering Latin and Arabic (Cairo, Tajawal, Almarai, IBM Plex Arabic, or Noto Sans Arabic). accent_hex = highlight_hex = cta_hex.
+7. NO IMAGE-IN-IMAGE: No device frames, no screen mockups, no photo-within-photo. All shots direct and full-bleed.
+8. HERO SQUARE: Section 1 is 1:1 — height equals width. Sections 2 and 3 have no fixed height; they expand to fit their content.
+9. CTA DOMINANCE: Section 3 CTA is the most visually dominant element — min 52px height, vivid solid brand color, glow/shadow. Price badge directly adjacent. Product in Section 3 MUST be front-facing, label legible, tilted 8–12° toward the viewer — ownership psychology: the viewer feels "this is mine."
+10. tag_visible = false when tag is empty.
 
-OUTPUT RULES: Output styling only — no copy text, no headlines, no CTA text, no feature text. highlighted_words must be 1–3 exact words from the provided copy — do not invent them. features_items: one visual_concept string per feature slot, no feature text.`;
+OUTPUT: Styling only — no copy text, no headlines, no CTA text, no feature text. highlighted_words: 1–3 exact words from provided copy. features_items: one visual_concept per feature slot.`;
 
-export const designerUserPrompt = `You are a designer for a single-canvas product landing page. You receive ad copy and features for context. Output ONLY styling, layout, typography, colors, and visual direction — never any copy text.
+export const designerUserPrompt = `You are a designer for a single-canvas product landing page. Output ONLY styling, layout, typography, colors, and visual direction — no copy text.
 
-STEP 1 — Background architecture (mandatory, do this first):
+STEP 1 — Background architecture:
 a) Extract 5–7 dominant hex values from the product images (packaging, material, label, surface).
-b) Build a background_gradient: at least 4 stops using those extracted hexes, with named direction (e.g. "160deg radial from top-center").
-c) Identify the grain/texture type that matches the product material (options: fine-grain noise, halftone dots, linen weave, brushed metal lines, cross-hatch, stipple, micro-diamond). Name it exactly.
-d) Define 2–3 radial light blooms (soft glows) positioned where the product sits per zone — use a lighter or warmer tint of the brand accent.
-e) Derive the repeating motif from a physical product attribute. Name the exact geometric form and tiling specification (size, rotation, repeat). This motif tiles continuously, never resets between zones.
+b) Build background_gradient: using extracted hexes, with named direction.
+c) Identify grain/texture type matching the product material (options: fine-grain-noise, halftone-dots, linen-weave, brushed-metal-lines, cross-hatch, stipple, micro-diamond). Name it exactly.
+d) Define 2–3 radial light blooms positioned where the product sits per zone, using a lighter tint of the brand accent.
+e) Derive the repeating motif from a physical product attribute. Name exact geometric form and tiling spec (size, rotation, repeat). This motif tiles continuously and never resets.
 
-STEP 2 — Continuity directive:
-Write a single paragraph describing how the background gradient + texture + light blooms + motif all connect across all 3 zones as one unbroken visual system. No zone should feel isolated.
+STEP 2 — Continuity:
+Write one paragraph describing how gradient + texture + light blooms + motif connect across all 3 zones as one unbroken visual system.
 
-SECTION ROLES (styling only):
-- Section 1 (Hero — 1:1): Product 55–70% of zone height. Define positions and styles for headline/subheadline/tag/badge. background field = zone-specific atmospheric treatment layered ON TOP of global system. highlighted_words: 1–3 exact words from provided section_1 copy.
-- Section 2 (Features): Product at different angle, ≥35% of zone height. features_items: one visual_concept per feature slot, no text. background field = mid-canvas atmospheric shift.
-- Section 3 (Conversion): Product in emotional use-case. Define cta_position, cta_style, price_position, price_style. background field = deepened, more saturated atmospheric finale. highlighted_words: 1–3 exact words from provided section_3 copy.
+SECTION ROLES:
+- Section 1 (Hero — 1:1 square): Product 55–70% of zone height. Define positions and styles for headline/subheadline/tag/badge. highlighted_words: 1–3 exact words from section_1 copy.
+- Section 2 (Features — natural height): Product at different angle, ≥35% of height. features_items: one visual_concept per feature slot.
+- Section 3 (Conversion — natural height): OWNERSHIP TRIGGER — product_position: front-center, slightly forward-tilted toward viewer (8–12°) as if being handed to them. product_treatment: sharp full clarity, label fully readable, strong cast shadow directly beneath product (grounding effect) — no blur, no vignette on product itself. No scene, no box, no environmental frame. Define cta_position, cta_style (vivid solid brand color, bold, glow), price_position, price_style. highlighted_words: 1–3 exact words from section_3 copy that reinforce possession ("yours", "get", "now", or equivalent in target language).
 
-Ad copy and features (context only — output styling, not this text):
+Ad copy and features (context only):
 {adCopy}`;
 
 const sectionBaseSchema = z.object({

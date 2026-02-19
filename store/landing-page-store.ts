@@ -2,7 +2,7 @@ import { create } from "zustand";
 import type { CopyLanguage, ArabicDialect, Currency } from "@/types/landing-page";
 import type { adCopyOutputSchema } from "@/lib/ai/product-landing-page/copy";
 import type { z } from "zod";
-import type { FullDesignerSpec } from "@/lib/ai/product-landing-page/designer";
+import type { DesignerOutput, FullDesignerSpec } from "@/lib/ai/product-landing-page/designer";
 
 export const PHASES = ["Product", "Language", "Pricing", "Review", "Design"] as const;
 export type Phase = (typeof PHASES)[number];
@@ -21,6 +21,7 @@ const initialState = {
   currency: "DZD" as Currency,
   copyData: null as CopyData | null,
   features: [] as FeatureItem[],
+  designer: null as DesignerOutput | null,
   result: null as GenerateResult | null,
 };
 
@@ -34,6 +35,7 @@ type LandingPageState = typeof initialState & {
   setCurrency: (currency: Currency) => void;
   setCopyData: (copyData: CopyData | null) => void;
   setFeatures: (features: FeatureItem[]) => void;
+  setDesigner: (designer: DesignerOutput | null) => void;
   setResult: (result: GenerateResult | null) => void;
   updateSection1: (field: string, value: string | null) => void;
   updateSection3: (field: string, value: string | null) => void;
@@ -54,6 +56,7 @@ export const useLandingPageStore = create<LandingPageState>((set) => ({
   setCurrency: (currency) => set({ currency }),
   setCopyData: (copyData) => set({ copyData }),
   setFeatures: (features) => set({ features }),
+  setDesigner: (designer) => set({ designer }),
   setResult: (result) => set({ result }),
   updateSection1: (field, value) =>
     set((state) => ({
