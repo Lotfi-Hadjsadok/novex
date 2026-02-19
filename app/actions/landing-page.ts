@@ -1,28 +1,41 @@
 "use server";
 
-import { adCopyOutputSchema, adCopySystemPrompt, adCopyUserPrompt, generateCopy } from "@/lib/ai/product-landing-page/copy";
-import { fileToBase64 } from "@/lib/utils";
-import type { ArabicDialect, CopyLanguage, ImageData } from "@/types/landing-page";
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { ChatGoogle } from "@langchain/google";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { generateFeatures } from "@/lib/ai/product-landing-page/features";
+import { generateCopy, adCopyOutputSchema } from "@/lib/ai/product-landing-page/copy";
+import type { ArabicDialect, CopyLanguage } from "@/types/landing-page";
+import { generateFeatures, featuresOutputSchema } from "@/lib/ai/product-landing-page/features";
+import { generateDesigner, mergeDesignerWithCopyAndFeatures } from "@/lib/ai/product-landing-page/designer";
+import { generateCanvaImage } from "@/lib/ai/product-landing-page/canva";
+import type { z } from "zod";
 
-
-
-export async function generateLandingPage(
+export async function generateCopyAndFeatures(
   productImages: File[],
   language: CopyLanguage,
   dialect: ArabicDialect,
   productName: string,
   price: string
 ) {
+  const [copy, features] = await Promise.all([
+    generateCopy(language, dialect, price, productName, productImages),
+    generateFeatures(language, dialect, productImages),
+  ]);
+  return { copy, features };
+}
 
- 
-
-  const copy = await generateCopy(language, dialect, price, productName, productImages);
-  const features = await generateFeatures(language, dialect, productImages);
-  console.log(copy);
-  console.log(features);
-  // TODO: Use `copy` together with `images`, `language`, `dialect`, and `price` to build and return the full landing page state.
+export async function generateDesignAndImage(
+  copy: z.infer<typeof adCopyOutputSchema>,
+  features: z.infer<typeof featuresOutputSchema>,
+  productImages: File[]
+) {
+  const designer = await generateDesigner(copy, features, productImages);
+  const creative = mergeDesignerWithCopyAndFeatures(designer, copy, features);
+  const { imageDataUrl } = await generateCanvaImage(
+    creative,
+    672,
+    1584,
+    productImages,
+    copy,
+    features,
+    designer
+  );
+  return { creative, imageDataUrl };
 }
