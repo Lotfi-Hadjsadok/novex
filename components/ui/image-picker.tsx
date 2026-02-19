@@ -1,67 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ImageIcon, XIcon, Upload } from "lucide-react";
-
-const TYPE = "image-picker-item";
-
-function ImageCard({
-  index,
-  preview,
-  disabled,
-  onRemove,
-  onMove,
-}: {
-  index: number;
-  preview: string | undefined;
-  disabled?: boolean;
-  onRemove: () => void;
-  onMove: (from: number, to: number) => void;
-}) {
-  const ref = React.useRef<HTMLDivElement>(null);
-  const [{ isDragging }, drag] = useDrag({
-    type: TYPE,
-    item: () => ({ type: TYPE, index }),
-    collect: (m) => ({ isDragging: m.isDragging() }),
-    canDrag: () => !disabled,
-  });
-  const [{ isOver }, drop] = useDrop({
-    accept: TYPE,
-    drop: (item: { index: number }) => item.index !== index && onMove(item.index, index),
-    collect: (m) => ({ isOver: m.isOver() }),
-  });
-  drag(drop(ref));
-
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        "group relative aspect-square overflow-hidden rounded-md border border-border bg-muted transition-colors",
-        isDragging && "opacity-50",
-        isOver && "border-2 border-primary ring-2 ring-primary/20"
-      )}
-    >
-      {preview && (
-        <img src={preview} alt="" className="h-full w-full object-cover pointer-events-none" />
-      )}
-      <Button
-        type="button"
-        variant="destructive"
-        size="icon"
-        className="absolute right-0.5 top-0.5 size-5 opacity-0 group-hover:opacity-100 transition-opacity"
-        onClick={(e) => (e.stopPropagation(), onRemove())}
-        disabled={disabled}
-        aria-label={`Remove image ${index + 1}`}
-      >
-        <XIcon className="size-2.5" />
-      </Button>
-    </div>
-  );
-}
+import { ImageIcon, Upload } from "lucide-react";
+import { ImageCard } from "@/components/ui/image-card";
 
 export interface ImagePickerProps {
   value?: File[];
@@ -85,33 +30,37 @@ export function ImagePicker({
   const [dropActive, setDropActive] = React.useState(false);
 
   React.useEffect(() => {
-    const map = new Map<number, string>();
-    value.forEach((file, i) => map.set(i, URL.createObjectURL(file)));
-    setPreviews((prev) => {
-      prev.forEach((url) => URL.revokeObjectURL(url));
-      return map;
+    const previewMap = new Map<number, string>();
+    value.forEach((file, fileIndex) => previewMap.set(fileIndex, URL.createObjectURL(file)));
+    setPreviews((previousPreviews) => {
+      previousPreviews.forEach((url) => URL.revokeObjectURL(url));
+      return previewMap;
     });
-    return () => map.forEach((url) => URL.revokeObjectURL(url));
+    return () => previewMap.forEach((url) => URL.revokeObjectURL(url));
   }, [value]);
 
   const addFiles = (files: File[]) => {
-    const rest = maxImages ? maxImages - value.length : Infinity;
-    onChange?.([...value, ...files.slice(0, rest)]);
+    const remainingSlots = maxImages ? maxImages - value.length : Infinity;
+    onChange?.([...value, ...files.slice(0, remainingSlots)]);
   };
 
-  const remove = (i: number) => onChange?.(value.filter((_, idx) => idx !== i));
-  const move = (from: number, to: number) => {
-    const next = [...value];
-    next.splice(to, 0, next.splice(from, 1)[0]);
-    onChange?.(next);
+  const removeFileAt = (fileIndex: number) =>
+    onChange?.(value.filter((_, filterIndex) => filterIndex !== fileIndex));
+
+  const moveFile = (from: number, to: number) => {
+    const reordered = [...value];
+    reordered.splice(to, 0, reordered.splice(from, 1)[0]);
+    onChange?.(reordered);
   };
 
-  const onFileDrop = (e: React.DragEvent) => {
-    e.preventDefault();
+  const handleFileDrop = (event: React.DragEvent) => {
+    event.preventDefault();
     setDropActive(false);
     if (disabled) return;
-    const files = Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith("image/"));
-    if (files.length) addFiles(files);
+    const droppedFiles = Array.from(event.dataTransfer.files).filter((file) =>
+      file.type.startsWith("image/")
+    );
+    if (droppedFiles.length) addFiles(droppedFiles);
   };
 
   const canAdd = !maxImages || value.length < maxImages;
@@ -127,32 +76,34 @@ export function ImagePicker({
           className="hidden"
           aria-label="Select images"
           disabled={disabled || !canAdd}
-          onChange={(e) => {
-            const files = Array.from(e.target.files || []);
-            if (files.length) addFiles(files);
-            e.target.value = "";
+          onChange={(event) => {
+            const selectedFiles = Array.from(event.target.files || []);
+            if (selectedFiles.length) addFiles(selectedFiles);
+            event.target.value = "";
           }}
         />
 
         <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2">
-          {value.map((file, i) => (
+          {value.map((file, fileIndex) => (
             <ImageCard
-              key={`${file.name}-${i}`}
-              index={i}
-              preview={previews.get(i)}
+              key={`${file.name}-${fileIndex}`}
+              index={fileIndex}
+              preview={previews.get(fileIndex)}
               disabled={disabled}
-              onRemove={() => remove(i)}
-              onMove={move}
+              onRemove={() => removeFileAt(fileIndex)}
+              onMove={moveFile}
             />
           ))}
           {canAdd && (
             <div
-              onDragOver={(e) => (e.preventDefault(), setDropActive(true))}
-              onDragLeave={(e) => (e.preventDefault(), setDropActive(false))}
-              onDrop={onFileDrop}
+              onDragOver={(event) => (event.preventDefault(), setDropActive(true))}
+              onDragLeave={(event) => (event.preventDefault(), setDropActive(false))}
+              onDrop={handleFileDrop}
               className={cn(
                 "relative aspect-square rounded-md border-2 border-dashed transition-colors",
-                dropActive ? "border-primary bg-primary/5" : "border-border bg-muted/30 hover:border-primary/50",
+                dropActive
+                  ? "border-primary bg-primary/5"
+                  : "border-border bg-muted/30 hover:border-primary/50",
                 disabled && "opacity-50 cursor-not-allowed"
               )}
             >
@@ -164,7 +115,11 @@ export function ImagePicker({
                 disabled={disabled}
               >
                 <div className="rounded-full bg-primary/10 p-1.5">
-                  {dropActive ? <Upload className="size-3.5 text-primary" /> : <ImageIcon className="size-3.5 text-muted-foreground" />}
+                  {dropActive ? (
+                    <Upload className="size-3.5 text-primary" />
+                  ) : (
+                    <ImageIcon className="size-3.5 text-muted-foreground" />
+                  )}
                 </div>
                 <p className="text-[10px] text-muted-foreground">{dropActive ? "Drop" : "Add"}</p>
               </Button>
@@ -174,7 +129,9 @@ export function ImagePicker({
 
         {value.length > 0 && (
           <p className="text-xs text-muted-foreground">
-            {maxImages ? `${value.length}/${maxImages} images` : `${value.length} image${value.length === 1 ? "" : "s"}`}
+            {maxImages
+              ? `${value.length}/${maxImages} images`
+              : `${value.length} image${value.length === 1 ? "" : "s"}`}
           </p>
         )}
       </div>

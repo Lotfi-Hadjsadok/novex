@@ -92,7 +92,7 @@ designer_tokens: {designerTokens}`;
     section1: JSON.stringify(creative.section_1),
     section2: JSON.stringify({
       ...creative.section_2,
-      features_visual_concepts: features.features.map((f) => ({ text: f.text, visual: f.visual })),
+      features_visual_concepts: features.features.map((featureItem) => ({ text: featureItem.text, visual: featureItem.visual })),
     }),
     section3: JSON.stringify(creative.section_3),
     rawCopy: JSON.stringify(copy),
@@ -118,7 +118,7 @@ designer_tokens: {designerTokens}`;
 
   const blocks = Array.isArray(response.content) ? response.content : [];
   const imageBlock = blocks.find(
-    (b: { type?: string }) => b.type === "inlineData"
+    (block: { type?: string }) => block.type === "inlineData"
   ) as { inlineData?: { mimeType?: string; data?: string } } | undefined;
 
   const imageDataUrl = imageBlock?.inlineData?.data
