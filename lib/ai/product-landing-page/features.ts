@@ -22,7 +22,7 @@ export const featuresUserPrompt = `You are an expert product analyst and visual 
 
 Extract 3–5 key product features.
 {userFeaturesInstruction}
-Language and dialect: {language} {dialect}`;
+{languageLine}`;
 
 const featureItemSchema = z.object({
   visual: z
@@ -61,12 +61,16 @@ export async function generateFeatures(
     ["human", imageContentBlocks],
   ]);
 
+  const languageLine =
+    language === "ar"
+      ? `Language and dialect: ${language} ${dialect}`
+      : `Language: ${language}`;
+
   const structuredFeaturesModel = featuresModel.withStructuredOutput(featuresOutputSchema);
 
   const chain = featuresPromptTemplate.pipe(structuredFeaturesModel as any);
   const featuresResult = await chain.invoke({
-    language,
-    dialect,
+    languageLine,
     userFeaturesInstruction: userFeatures?.length
       ? `The user has provided these features: ${userFeatures.join(", ")} add more if needed.`
       : "",

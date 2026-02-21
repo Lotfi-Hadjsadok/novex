@@ -172,7 +172,7 @@ function PagePreviewSkeleton({
   generating,
 }: {
   step: 1 | 2 | 3;
-  meta: (typeof STEP_META)[1];
+  meta: (typeof STEP_META)[1] | (typeof STEP_META)[2] | (typeof STEP_META)[3];
   generating: boolean;
 }) {
   const Icon = meta.icon;

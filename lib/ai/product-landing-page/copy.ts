@@ -25,7 +25,7 @@ export const adCopySystemPrompt = `CRITICAL RULES — Analyze product images bef
 export const adCopyUserPrompt = `You are an elite direct-response copywriter. Write high-converting, scroll-stopping marketing copy. Focus on clarity, persuasion, emotional triggers, and concrete benefits. Avoid fluff.
 
 Write conversion-focused copy for a 3-section landing page.
-Language and dialect: {language} {dialect}
+{languageLine}
 Price: {price}
 Product name: {productName}`;
 
@@ -76,9 +76,14 @@ export async function generateCopy(
     ["human", imageContentBlocks],
   ]);
 
+  const languageLine =
+    language === "ar"
+      ? `Language and dialect: ${language} ${dialect}`
+      : `Language: ${language}`;
+
   const structuredCopyModel = copyModel.withStructuredOutput(adCopyOutputSchema);
   const chain = copyPrompt.pipe(structuredCopyModel as any);
-  const copyResult = await chain.invoke({ language, dialect, price, productName });
+  const copyResult = await chain.invoke({ languageLine, price, productName });
 
   return copyResult as z.infer<typeof adCopyOutputSchema>;
 }
