@@ -33,22 +33,20 @@ export async function generateCanvaImage(
 
 CANVAS: One tall vertical image. Zero borders, zero seams, zero background resets, zero horizontal lines anywhere.
 
-BACKGROUND (one global system, full canvas height — never resets):
-- One multi-stop gradient flows top to bottom without interruption.
-- One texture pattern tiles seamlessly across the full height.
-- Light blooms at absolute canvas positions — not bound to any content area.
-- One motif tiles continuously top to bottom — opacity increases toward bottom, tile grid never re-anchors.
-- Never substitute a solid or two-stop gradient.
+BACKGROUND — REFLECTS THE PRODUCT (one global system, full canvas height — never resets):
+- The background must represent an atmosphere or environment related to the product (e.g. soft bathroom shelf, gym floor glow, kitchen counter, bedroom vanity) — not a generic gradient. The environment_atmosphere in creative_spec describes this. Render so the canvas suggests that product-appropriate setting or mood.
+- Layer the design system on top: multi-stop gradient (product-extracted colors), one texture pattern tiling seamlessly, light blooms at key positions, one motif tiling continuously — opacity increases toward bottom, tile grid never re-anchors.
+- Never substitute a plain solid or two-stop gradient as the only background — the background should reflect where or how the product is used.
 
 CONTENT AREAS (vertical windows into one canvas — not separate images):
 - Section 1 (Hero): Square (1:1). Product centered at 55–70% of this height. Headline + subheadline.
 - Section 2 (Features): Natural height — expands to fit content. Product at different angle ≥35% of height. Feature icons + labels.
-- Section 3 (Conversion — OWNERSHIP TRIGGER): Natural height — expands to fit content. Product directly on canvas — no scene, no environmental frame, no container box. OWNERSHIP PSYCHOLOGY: render the product front-facing at eye level, label fully legible, product body tilted ~8–12° toward the viewer as if being physically handed to them. The viewer must feel "this is already mine." Product occupies 40–55% of section height. Strong cast shadow directly beneath the product anchors it on the canvas. CTA button is the single most dominant element — min 52px height, vivid solid brand color, bold text, glowing drop-shadow. Price badge adjacent. Headline copy frames the product as already belonging to the viewer.
+- Section 3 (Conversion — EMOTIONAL DESIRE): Natural height — expands to fit content. Show the product in use so the client converts: worn, in hand, on a surface in the environment, or applied (e.g. on skin, on bed). product_in_use_direction in section_3 specifies how. Product sits directly on the canvas in that context — NEVER inside iframe, picture-in-picture, device frame, or window. Triggers "I want that." Product 40–55% of section height, sharp clarity, label legible, strong cast shadow beneath. CTA button is the single most dominant element — min 52px height, vivid solid brand color, bold text, glowing drop-shadow. Price badge adjacent.
 
 SEAM TEST — if any of the following exist between content areas, the image is wrong:
 horizontal line · background color shift · gradient restart · texture re-anchor · border · dividing element
 
-PRODUCT FIDELITY: Identical product across all areas — same fit, colors, label, silhouette. Only angle and context change.
+PRODUCT FIDELITY: Identical product across all areas — same fit, colors, label, silhouette. Only angle and context change. NO IFRAME/PICTURE-IN-PICTURE: Never show the product inside an iframe, picture-in-picture, device frame, screen mockup, or window. Product always directly on the canvas, shown in use (worn, in place, used).
 
 CTA DOMINANCE: CTA button is the most visually dominant element in Section 3 — min 52px height, vivid solid brand color, bold text, glow/shadow. Price badge directly adjacent.
 
@@ -64,7 +62,7 @@ SECTION 2 — Features (natural height — expands to fit content): {section2}
 
 SECTION 3 — Conversion / Ownership Trigger (natural height — expands to fit content): {section3}
 
-OWNERSHIP DIRECTIVE: The product in this section must feel like it already belongs to the person looking at it. Front-facing, label fully legible, body tilted 8–12° toward the viewer — as if being handed directly to them. No scene, no box, no surface. Strong cast shadow beneath the product grounds it. The viewer's eye should land on the product first, then be pulled immediately to the CTA. Render the CTA button as the most dominant typographic element on the canvas.
+EMOTIONAL DESIRE DIRECTIVE: Section 3 must show the product in use — worn, in hand, on a surface in the environment, or applied (e.g. on skin, on bed) — so the viewer feels "I want that" and converts. Use product_in_use_direction from section_3. Product sits directly on the canvas; never iframe, picture-in-picture, or product inside a frame/window. Sharp clarity, label legible, strong cast shadow beneath the product. Viewer's eye lands on the product first, then the CTA. Render the CTA button as the most dominant typographic element on the canvas.
 
 All three areas share the same unbroken background. The background does not change, restart, or shift between content areas.
 
@@ -75,7 +73,7 @@ raw_features: {rawFeatures}
 designer_tokens: {designerTokens}
 {customPromptLine}
 
-NEGATIVE PROMPT: horizontal dividing line, section border, background seam, color reset, collage, three separate panels, visible join, gradient restart, texture re-anchor, fixed equal thirds, product-in-a-scene, lifestyle-scene-box, environmental-frame-box, scene-within-section, product-in-a-room, isolated-scene-container`;
+NEGATIVE PROMPT: horizontal dividing line, section border, background seam, color reset, collage, three separate panels, visible join, gradient restart, texture re-anchor, fixed equal thirds, iframe, picture-in-picture, product inside frame, product on screen, product in device mockup, product in window, product in second image, environmental-frame-box, isolated-scene-container`;
 
   const canvaModel = new ChatGoogle('gemini-3-pro-image-preview',{
     imageConfig: {
@@ -97,6 +95,7 @@ NEGATIVE PROMPT: horizontal dividing line, section border, background seam, colo
     targetWidth: String(targetWidth),
     targetHeight: String(targetHeight),
     creativeAgentDirectives: JSON.stringify({
+      environment_atmosphere: creative.environment_atmosphere ?? null,
       continuity_directive: creative.continuity_directive ?? null,
       background_motif: creative.background_motif ?? null,
       background_system: creative.background_system ?? null,
@@ -108,7 +107,7 @@ NEGATIVE PROMPT: horizontal dividing line, section border, background seam, colo
       highlight_style: creative.highlight_style ?? null,
       cta_hex: creative.accent_hex,
       branding_rule: "Highlighted words and CTA button MUST use brand_hex only—no separate colors for emphasis or CTA.",
-      background_rule: "Use the background_system exactly as specified: render gradient_stops at gradient_direction, overlay texture_type at texture_opacity, place each light_bloom at its position with given color and radius, and tile motif_shape (derived from motif_source) at motif_tile_size rotated motif_rotation — opacity per zone as specified. NEVER substitute a simple gradient or solid fill.",
+      background_rule: "First render the environment_atmosphere (product-appropriate setting or mood). Then use the background_system exactly: render gradient_stops at gradient_direction, overlay texture_type at texture_opacity, place each light_bloom at its position with given color and radius, and tile motif_shape (derived from motif_source) at motif_tile_size rotated motif_rotation — opacity per zone as specified. NEVER substitute a simple gradient or solid fill; the background must reflect the product.",
     }),
     section1: JSON.stringify(creative.section_1),
     section2: JSON.stringify({
@@ -120,6 +119,7 @@ NEGATIVE PROMPT: horizontal dividing line, section border, background seam, colo
     rawCopy: JSON.stringify(copy),
     rawFeatures: JSON.stringify(features),
     designerTokens: JSON.stringify({
+      environment_atmosphere: designer.environment_atmosphere,
       background_motif: designer.background_motif,
       background_system: designer.background_system,
       accent_color: designer.accent_color,

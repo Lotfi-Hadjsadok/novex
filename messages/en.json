@@ -1,0 +1,245 @@
+{
+  "common": {
+    "back": "Back",
+    "next": "Next",
+    "startOver": "Start over",
+    "generating": "Generating…",
+    "download": "Download",
+    "regenerate": "Regenerate",
+    "add": "Add",
+    "copy": "Copy",
+    "copied": "Copied",
+    "productImages": "Product images",
+    "productName": "Product name",
+    "productNamePlaceholder": "e.g. NovaX Pro Headphones",
+    "language": "Language",
+    "arabicDialect": "Arabic dialect",
+    "price": "Price",
+    "priceOptional": "Price (optional)",
+    "pricePlaceholder": "29.99",
+    "customInstructions": "Custom instructions (optional)",
+    "generateDesignAndImage": "Generate design & image",
+    "generatingDesign": "Generating design…",
+    "headline": "Headline",
+    "subheadline": "Subheadline",
+    "tag": "Tag",
+    "tagPlaceholder": "e.g. New Arrival",
+    "badge": "Badge",
+    "badgePlaceholder": "e.g. –20% OFF",
+    "ctaText": "CTA text",
+    "ctaPlaceholder": "e.g. Shop Now",
+    "shopInfo": "Shop info",
+    "shopInfoPlaceholder": "e.g. Free shipping · 30-day returns",
+    "features": "Features",
+    "label": "Label",
+    "labelPlaceholder": "e.g. Waterproof Design",
+    "visualHint": "Visual hint",
+    "visualHintPlaceholder": "Visual concept for AI",
+    "generatedAltAd": "Generated ad creative",
+    "generatedAltLanding": "Generated landing page",
+    "stepN": "Step {step}",
+    "stepOfThree": "Step {step} of 3",
+    "generatingCopy": "Generating copy",
+    "previewLayout": "Preview layout",
+    "pickingDesignSystem": "Picking design system",
+    "colorTypographyAesthetic": "Color, typography & aesthetic",
+    "choosingColors": "Choosing colors…"
+  },
+  "arabicDialects": {
+    "standard": "Standard",
+    "algerian": "Algerian",
+    "tunisian": "Tunisian",
+    "moroccan": "Moroccan"
+  },
+  "nav": {
+    "adCopies": "Ad copies",
+    "adCreatives": "Ad Creatives",
+    "landingPages": "Landing Pages",
+    "editImages": "Edit Images"
+  },
+  "languageSwitcher": {
+    "en": "English",
+    "fr": "Français",
+    "ar": "العربية"
+  },
+  "adCopiesPage": {
+    "title": "Ad copies",
+    "description": "Upload product photos, pick a marketing angle, and generate multiple ready-to-use ad copies with your tone, language, and format."
+  },
+  "adCreativesPage": {
+    "title": "Ad Creatives",
+    "description": "Generate a single-panel ad creative from product images. Choose your format and the AI builds the whole composition."
+  },
+  "landingPagesPage": {
+    "title": "Landing Pages",
+    "description": "Generate a landing page from product images. The output is an image."
+  },
+  "editImagesPage": {
+    "title": "Edit Images",
+    "description": "Edit and enhance your product images with AI-powered tools."
+  },
+  "adCopies": {
+    "steps": {
+      "product": "Product",
+      "productDesc": "Images & name",
+      "settings": "Settings",
+      "settingsDesc": "Tone & style",
+      "pricing": "Pricing",
+      "pricingDesc": "Price & format",
+      "generate": "Generate",
+      "copies": "Copies"
+    },
+    "form": {
+      "productDetails": "Product details",
+      "productDetailsDesc": "Upload product photos and enter the product name.",
+      "toneAndStyle": "Tone & style",
+      "toneAndStyleDesc": "Choose the tone and emoji preference.",
+      "pricingAndFormat": "Pricing & format",
+      "pricingAndFormatDesc": "Set the price and ad copy format options.",
+      "tone": "Tone",
+      "emojis": "Emojis",
+      "withoutEmojis": "Without emojis",
+      "withEmojis": "With emojis",
+      "copySize": "Copy size",
+      "numberOfCopies": "Number of copies",
+      "customPlaceholder": "e.g. Focus on eco-friendly angle, use urgency…",
+      "generateAngles": "Generate angles"
+    },
+    "tones": {
+      "professional": "Professional",
+      "professionalDesc": "Authoritative & trustworthy",
+      "playful": "Playful",
+      "playfulDesc": "Fun, energetic & light-hearted",
+      "luxury": "Luxury",
+      "luxuryDesc": "Premium, exclusive & elevated",
+      "urgent": "Urgent",
+      "urgentDesc": "Scarcity-driven & action-pushing",
+      "casual": "Casual",
+      "casualDesc": "Friendly, relatable & everyday",
+      "inspirational": "Inspirational",
+      "inspirationalDesc": "Motivating & empowering"
+    },
+    "sizes": {
+      "short": "Short",
+      "shortDesc": "Headline + 1 line + CTA",
+      "medium": "Medium",
+      "mediumDesc": "Headline + 2–3 lines + CTA",
+      "long": "Long",
+      "longDesc": "Full paragraph + features + CTA"
+    },
+    "generating": {
+      "title": "Generating angles",
+      "description": "AI is analyzing your product and crafting marketing angles…",
+      "studyingImages": "Studying product images",
+      "identifyingAudience": "Identifying target audience",
+      "craftingAngles": "Crafting strategic angles",
+      "anglePreview": "Angle preview"
+    },
+    "angles": {
+      "chooseTitle": "Choose your angle",
+      "chooseDescription": "The AI found {count} marketing angles. Pick the one that best fits your campaign.",
+      "writing": "Writing…"
+    },
+    "copiesGenerating": {
+      "title": "Writing {count} ad {count, plural, one {copy} other {copies}}",
+      "description": "AI is crafting high-converting variations for your selected angle…"
+    },
+    "results": {
+      "title": "{count} ad {count, plural, one {copy} other {copies}} ready",
+      "withEmojis": "with emojis",
+      "noEmojis": "no emojis",
+      "changeAngle": "Change angle",
+      "copyLabel": "Copy {index}"
+    }
+  },
+  "adCreative": {
+    "steps": {
+      "step1Label": "Product Setup",
+      "step1Desc": "Upload clear product photos and enter your product name.",
+      "step2Label": "Language & Dialect",
+      "step2Desc": "Choose the output language for your ad creative copy.",
+      "step3Label": "Pricing & Format",
+      "step3Desc": "Set the ad format ratio (and optionally price), then hit Generate.",
+      "generatingTask1": "Scanning product images",
+      "generatingTask2": "Writing ad copy",
+      "generatingTask3": "Building feature labels"
+    },
+    "designSkeleton": {
+      "task1": "Picking color palette",
+      "task2": "Choosing typography",
+      "task3": "Building background system"
+    },
+    "form": {
+      "productDetails": "Product details",
+      "productDetailsDesc": "Upload your product images and enter the product name.",
+      "pricingAndFormat": "Pricing & format",
+      "pricingAndFormatDesc": "Set the price, currency, and ad format.",
+      "adFormat": "Ad format",
+      "customPlaceholder": "e.g. Bold luxury feel, target Gen Z…",
+      "generateCopy": "Generate copy"
+    },
+    "generating": {
+      "title": "Generating ad copy",
+      "description": "AI is analyzing your product and writing ad creative copy…",
+      "analyzingImages": "Analyzing product images",
+      "writingCopy": "Writing headline & copy",
+      "craftingFeatures": "Crafting feature labels",
+      "copyPreview": "Copy preview"
+    },
+    "review": {
+      "adCopy": "Ad copy",
+      "adCopyDesc": "Edit the generated copy before creating the design.",
+      "featuresDesc": "Edit or add the feature labels shown on the ad."
+    }
+  },
+  "landingPage": {
+    "steps": {
+      "step1Label": "Product Setup",
+      "step1Desc": "Upload clear product photos and enter your product name. AI will scan them to craft compelling copy.",
+      "step2Label": "Language & Dialect",
+      "step2Desc": "Choose the output language for your landing page. If Arabic is selected, you can also pick a regional dialect.",
+      "step3Label": "Pricing & Currency",
+      "step3Desc": "Set your product price and currency, then hit Generate — AI will write your copy and build the feature list.",
+      "generatingTask1": "Scanning product images",
+      "generatingTask2": "Writing headlines & copy",
+      "generatingTask3": "Building feature cards"
+    },
+    "designSkeleton": {
+      "task1": "Checking the right color palette",
+      "task2": "Picking typography & aesthetic",
+      "task3": "Building gradient & motif system"
+    },
+    "form": {
+      "productDetails": "Product details",
+      "productDetailsDesc": "Upload your product images and enter the product name.",
+      "pricing": "Pricing",
+      "pricingDesc": "Set the product price and currency.",
+      "customPlaceholder": "e.g. Emphasize sustainability, target young professionals…",
+      "generateCopyAndFeatures": "Generate copy & features"
+    },
+    "generating": {
+      "title": "Generating copy & features",
+      "description": "AI is analyzing your product and writing landing page content…",
+      "analyzingImages": "Analyzing product images",
+      "writingHeadlines": "Writing hero headlines",
+      "craftingFeatures": "Crafting feature cards",
+      "heroCopyPreview": "Hero copy preview",
+      "featureCards": "Feature cards"
+    },
+    "review": {
+      "copy": "Copy",
+      "copyDesc": "Edit the generated copy before creating the design.",
+      "heroSection": "Hero section",
+      "conversionSection": "Conversion section",
+      "displayedPrice": "Displayed price",
+      "featuresDesc": "Edit, add, or remove product feature cards."
+    }
+  },
+  "phases": {
+    "product": "Product",
+    "language": "Language",
+    "pricing": "Pricing",
+    "review": "Review",
+    "design": "Design"
+  }
+}

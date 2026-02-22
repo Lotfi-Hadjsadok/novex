@@ -38,5 +38,5 @@ export async function generateAdCreativeImageAction(
   customPrompt?: string
 ): Promise<{ imageDataUrl: string | null }> {
   const { width, height } = getRatioDimensions(aspectRatio);
-  return await generateAdCreativeImage(designer, copy, productImages, width, height, customPrompt);
+  return await generateAdCreativeImage(designer, copy, productImages, width, height, aspectRatio, customPrompt);
 }

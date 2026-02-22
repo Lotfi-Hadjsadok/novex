@@ -7,10 +7,10 @@ import { fileToBase64 } from "@/lib/utils";
 export const adCreativeCopyRules = {
   headline:    "Hero headline specific to THIS product. Max 5 words — short, punchy, scroll-stopping.",
   subheadline: "Supporting text expanding the headline. Max 10 words. Specific to this product.",
-  tag:         "Short product category label. Keep minimal. Use empty string if none.",
+  tag:         "Use null by default. Only add a short product category label if it strongly improves clarity.",
   badgeText:   "Use null by default. Only set if there is a real promotional label (e.g. –20% OFF).",
   featureText: "2–4 word feature label. Specific to the product. Not generic marketing.",
-  featureVisual: "One clear visual concept for this feature. Concise visual phrase.",
+  featureVisual: "One clear visual concept for this feature, in the same language as the headline and CTA. Concise visual phrase.",
   cta:         "Call-to-action button text. 2–4 words. Specific to this product.",
   price:       "Price as shown or inferred. Use empty string if unknown.",
   shopInfo:    "Optional trust line (e.g. Free shipping · 30-day returns). Null if not needed.",
@@ -19,7 +19,7 @@ export const adCreativeCopyRules = {
 export const adCreativeCopySchema = z.object({
   headline:    z.string().describe(adCreativeCopyRules.headline),
   subheadline: z.string().describe(adCreativeCopyRules.subheadline),
-  tag:         z.string().describe(adCreativeCopyRules.tag),
+  tag:         z.string().nullable().describe(adCreativeCopyRules.tag),
   badge_text:  z.string().nullable().describe(adCreativeCopyRules.badgeText),
   features: z
     .array(

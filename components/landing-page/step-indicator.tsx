@@ -1,15 +1,26 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { PHASES, type Phase } from "@/store/landing-page-store";
+import { useTranslations } from "next-intl";
+import type { Phase } from "@/store/landing-page-store";
+
+const PHASE_KEYS = ["product", "pricing", "review", "design"] as const;
+const PHASE_MAP: Record<Phase, (typeof PHASE_KEYS)[number]> = {
+  Product: "product",
+  Language: "product",
+  Pricing: "pricing",
+  Review: "review",
+  Design: "design",
+};
 
 export function StepIndicator({ phase }: { phase: Phase }) {
-  const activeIndex = PHASES.indexOf(phase);
+  const t = useTranslations("phases");
+  const activeIndex = PHASE_KEYS.indexOf(PHASE_MAP[phase]);
 
   return (
     <div className="flex items-center justify-center">
-      {PHASES.map((phaseName, phaseIndex) => (
-        <div key={phaseName} className="flex items-center">
+      {PHASE_KEYS.map((phaseKey, phaseIndex) => (
+        <div key={phaseKey} className="flex items-center">
           <div className="flex flex-col items-center gap-1.5">
             <div
               className={cn(
@@ -29,10 +40,10 @@ export function StepIndicator({ phase }: { phase: Phase }) {
                 phaseIndex <= activeIndex ? "text-foreground" : "text-muted-foreground"
               )}
             >
-              {phaseName}
+              {t(phaseKey)}
             </span>
           </div>
-          {phaseIndex < PHASES.length - 1 && (
+          {phaseIndex < PHASE_KEYS.length - 1 && (
             <div
               className={cn(
                 "mx-2 mb-4 h-px w-8 sm:w-12 transition-colors duration-300",

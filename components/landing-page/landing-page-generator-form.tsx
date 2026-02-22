@@ -1,10 +1,11 @@
 "use client";
 
 import { useTransition, useState } from "react";
+import { useTranslations } from "next-intl";
+import { useSyncLocaleLanguage } from "@/hooks/use-sync-locale-language";
 import {
   ARABIC_DIALECTS,
   CURRENCIES,
-  LANGUAGES,
   type ArabicDialect,
   type CopyLanguage,
   type Currency,
@@ -44,131 +45,21 @@ import {
 } from "@/app/actions/landing-page";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ChevronLeft, ChevronRight, Download, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Loader2, Plus, Trash2 } from "lucide-react";
 import { useLandingPageStore } from "@/store/landing-page-store";
 import type { Phase } from "@/store/landing-page-store";
 import { StepIndicator } from "./step-indicator";
-import { AIGeneratingCanvas, ReviewCanvasSkeleton, StepCanvasSkeleton } from "./ai-generating-canvas";
-
-function CopyGeneratingSkeleton() {
-  return (
-    <Card>
-      <style>{`
-        @keyframes cg-fill {
-          0%   { width: 0%; opacity: 0; }
-          8%   { opacity: 1; }
-          45%  { width: var(--fill-pct); }
-          90%  { width: var(--fill-pct); opacity: 1; }
-          100% { width: var(--fill-pct); opacity: 0; }
-        }
-        @keyframes cg-shimmer {
-          0%   { background-position: -200% center; }
-          100% { background-position:  200% center; }
-        }
-        @keyframes cg-pct {
-          0%, 100% { opacity: 0.35; }
-          50%      { opacity: 0.65; }
-        }
-        .cg-fill-bar {
-          width: 0;
-          animation: cg-fill 4s ease-out infinite, cg-shimmer 2s linear infinite;
-          background: linear-gradient(90deg,
-            color-mix(in oklch, var(--primary) 70%, transparent) 0%,
-            var(--primary) 45%,
-            var(--primary) 55%,
-            color-mix(in oklch, var(--primary) 85%, transparent) 100%
-          );
-          background-size: 200% 100%;
-        }
-        .cg-pct { animation: cg-pct 2.5s ease-in-out infinite; }
-      `}</style>
-      <CardHeader>
-        <div className="flex items-start gap-3">
-          <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20">
-            <Sparkles className="size-4 text-primary animate-pulse" />
-          </div>
-          <div className="space-y-0.5 pt-0.5">
-            <CardTitle className="text-base">Generating copy & features</CardTitle>
-            <CardDescription>
-              AI is analyzing your product and writing landing page content…
-            </CardDescription>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-
-        {/* Animated task progress */}
-        <div className="space-y-3.5">
-          {(
-            [
-              { label: "Analyzing product images",  pct: 80 },
-              { label: "Writing hero headlines",     pct: 55 },
-              { label: "Crafting feature cards",     pct: 30 },
-            ] as const
-          ).map(({ label, pct }, i) => (
-            <div key={i} className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div
-                    className="w-1.5 h-1.5 rounded-full animate-bounce shrink-0"
-                    style={{
-                      background: "hsl(var(--primary))",
-                      animationDelay: `${i * 0.25}s`,
-                    }}
-                  />
-                  <span className="text-sm text-muted-foreground">{label}</span>
-                </div>
-                <span className="cg-pct text-[10px] tabular-nums text-muted-foreground/50">{pct}%</span>
-              </div>
-              <div
-                className="h-1.5 rounded-full bg-muted overflow-hidden"
-                style={{ '--fill-pct': `${pct}%` } as any}
-              >
-                <div
-                  className="cg-fill-bar h-full rounded-full block"
-                  style={{ animationDelay: `${i * 0.4}s` } as any}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Copy preview skeleton */}
-        <div className="rounded-xl border bg-muted/20 p-4 space-y-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-            Hero copy preview
-          </p>
-          <div className="space-y-2 animate-pulse">
-            <div className="h-3.5 rounded-md bg-primary/10 w-4/5" />
-            <div className="h-3.5 rounded-md bg-primary/10 w-[58%]" />
-            <div className="h-2.5 rounded bg-muted w-2/3 mt-1" />
-          </div>
-
-          <div className="border-t border-border/40 pt-3 space-y-2.5">
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-              Feature cards
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              {[0, 1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="rounded-lg border bg-background p-3 space-y-2 animate-pulse"
-                  style={{ animationDelay: `${i * 0.15}s` }}
-                >
-                  <div className="h-5 w-5 rounded-md bg-primary/12 mx-auto" />
-                  <div className="h-2 rounded bg-muted w-full" />
-                  <div className="h-2 rounded bg-muted w-3/4 mx-auto" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+import { AIGeneratingCanvas } from "./ai-generating-canvas";
+import { ReviewCanvasSkeleton } from "./review-canvas-skeleton";
+import { StepCanvasSkeleton } from "./step-canvas-skeleton";
+import { CopyGeneratingSkeleton } from "./copy-generating-skeleton";
 
 export function LandingPageGeneratorForm() {
+  const tc = useTranslations("common");
+  const tf = useTranslations("landingPage.form");
+  const tr = useTranslations("landingPage.review");
+  const tDialect = useTranslations("arabicDialects");
+
   const {
     formStep,
     setFormStep,
@@ -206,15 +97,15 @@ export function LandingPageGeneratorForm() {
   const [isDesignPending, startDesignTransition] = useTransition();
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
+  useSyncLocaleLanguage(setLanguage);
+
   const currentPhase: Phase = result
     ? "Design"
     : copyData
       ? "Review"
       : formStep === 1
         ? "Product"
-        : formStep === 2
-          ? "Language"
-          : "Pricing";
+        : "Pricing";
 
   const handleGenerateCopy = () => {
     startCopyTransition(async () => {
@@ -265,14 +156,12 @@ export function LandingPageGeneratorForm() {
           <Card>
             <CardHeader>
               <CardTitle>
-                {formStep === 1 && "Product details"}
-                {formStep === 2 && "Language & dialect"}
-                {formStep === 3 && "Pricing"}
+                {formStep === 1 && tf("productDetails")}
+                {formStep === 2 && tf("pricing")}
               </CardTitle>
               <CardDescription>
-                {formStep === 1 && "Upload your product images and enter the product name."}
-                {formStep === 2 && "Choose the output language for your landing page copy."}
-                {formStep === 3 && "Set the product price and currency."}
+                {formStep === 1 && tf("productDetailsDesc")}
+                {formStep === 2 && tf("pricingDesc")}
               </CardDescription>
             </CardHeader>
 
@@ -282,7 +171,7 @@ export function LandingPageGeneratorForm() {
                   <>
                     <Field>
                       <FieldLabel>
-                        <FieldTitle>Product images</FieldTitle>
+                        <FieldTitle>{tc("productImages")}</FieldTitle>
                       </FieldLabel>
                       <FieldContent>
                         <ImagePicker value={productImages} onChange={setProductImages} />
@@ -290,44 +179,19 @@ export function LandingPageGeneratorForm() {
                     </Field>
                     <Field>
                       <FieldLabel>
-                        <FieldTitle>Product name</FieldTitle>
+                        <FieldTitle>{tc("productName")}</FieldTitle>
                       </FieldLabel>
                       <Input
-                        placeholder="e.g. NovaX Pro Headphones"
+                        placeholder={tc("productNamePlaceholder")}
                         value={productName}
                         onChange={(event) => setProductName(event.target.value)}
                       />
-                    </Field>
-                  </>
-                )}
-
-                {formStep === 2 && (
-                  <>
-                    <Field>
-                      <FieldLabel>
-                        <FieldTitle>Language</FieldTitle>
-                      </FieldLabel>
-                      <Select
-                        value={language}
-                        onValueChange={(selectedValue) => setLanguage(selectedValue as CopyLanguage)}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {LANGUAGES.map((languageOption) => (
-                            <SelectItem key={languageOption.value} value={languageOption.value}>
-                              {languageOption.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
                     </Field>
 
                     {language === "ar" && (
                       <Field>
                         <FieldLabel>
-                          <FieldTitle>Arabic dialect</FieldTitle>
+                          <FieldTitle>{tc("arabicDialect")}</FieldTitle>
                         </FieldLabel>
                         <Select
                           value={dialect}
@@ -339,7 +203,7 @@ export function LandingPageGeneratorForm() {
                           <SelectContent>
                             {ARABIC_DIALECTS.map((dialectOption) => (
                               <SelectItem key={dialectOption.value} value={dialectOption.value}>
-                                {dialectOption.label}
+                                {tDialect(dialectOption.value)}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -349,11 +213,11 @@ export function LandingPageGeneratorForm() {
                   </>
                 )}
 
-                {formStep === 3 && (
+                {formStep === 2 && (
                   <>
                     <Field>
                       <FieldLabel>
-                        <FieldTitle>Price</FieldTitle>
+                        <FieldTitle>{tc("price")}</FieldTitle>
                       </FieldLabel>
                       <div className="flex gap-2">
                         <Select
@@ -374,7 +238,7 @@ export function LandingPageGeneratorForm() {
                         <Input
                           className="flex-1"
                           type="text"
-                          placeholder="29.99"
+                          placeholder={tc("pricePlaceholder")}
                           value={price}
                           onChange={(event) => setPrice(event.target.value)}
                         />
@@ -382,10 +246,10 @@ export function LandingPageGeneratorForm() {
                     </Field>
                     <Field>
                       <FieldLabel>
-                        <FieldTitle>Custom instructions (optional)</FieldTitle>
+                        <FieldTitle>{tc("customInstructions")}</FieldTitle>
                       </FieldLabel>
                       <Textarea
-                        placeholder="e.g. Emphasize sustainability, target young professionals…"
+                        placeholder={tf("customPlaceholder")}
                         value={customPrompt}
                         onChange={(e) => setCustomPrompt(e.target.value)}
                       />
@@ -401,29 +265,29 @@ export function LandingPageGeneratorForm() {
                   variant="ghost"
                   onClick={() => setFormStep((formStep - 1) as 1 | 2 | 3)}
                 >
-                  <ChevronLeft className="size-4 mr-1" />
-                  Back
+                  <ChevronLeft className="size-4 me-1" />
+                  {tc("back")}
                 </Button>
               ) : (
                 <div />
               )}
 
-              {formStep < 3 ? (
+              {formStep < 2 ? (
                 <Button onClick={() => setFormStep((formStep + 1) as 2 | 3)}>
-                  Next
-                  <ChevronRight className="size-4 ml-1" />
+                  {tc("next")}
+                  <ChevronRight className="size-4 ms-1" />
                 </Button>
               ) : (
                 <Button onClick={handleGenerateCopy} disabled={isCopyPending}>
                   {isCopyPending ? (
                     <>
-                      <Loader2 className="size-4 mr-2 animate-spin" />
-                      Generating…
+                      <Loader2 className="size-4 me-2 animate-spin" />
+                      {tc("generating")}
                     </>
                   ) : (
                     <>
-                      Generate copy & features
-                      <ChevronRight className="size-4 ml-1" />
+                      {tf("generateCopyAndFeatures")}
+                      <ChevronRight className="size-4 ms-1" />
                     </>
                   )}
                 </Button>
@@ -436,20 +300,18 @@ export function LandingPageGeneratorForm() {
           <div className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Copy</CardTitle>
-                <CardDescription>
-                  Edit the generated copy before creating the design.
-                </CardDescription>
+                <CardTitle className="text-base">{tr("copy")}</CardTitle>
+                <CardDescription>{tr("copyDesc")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-3">
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Hero section
+                    {tr("heroSection")}
                   </p>
                   <FieldGroup>
                     <Field>
                       <FieldLabel>
-                        <FieldTitle>Headline</FieldTitle>
+                        <FieldTitle>{tc("headline")}</FieldTitle>
                       </FieldLabel>
                       <Input
                         value={copyData.section_1.headline}
@@ -458,7 +320,7 @@ export function LandingPageGeneratorForm() {
                     </Field>
                     <Field>
                       <FieldLabel>
-                        <FieldTitle>Subheadline</FieldTitle>
+                        <FieldTitle>{tc("subheadline")}</FieldTitle>
                       </FieldLabel>
                       <Input
                         value={copyData.section_1.subheadline}
@@ -468,24 +330,24 @@ export function LandingPageGeneratorForm() {
                     <div className="grid grid-cols-2 gap-3">
                       <Field>
                         <FieldLabel>
-                          <FieldTitle>Tag</FieldTitle>
+                          <FieldTitle>{tc("tag")}</FieldTitle>
                         </FieldLabel>
                         <Input
-                          value={copyData.section_1.tag}
-                          onChange={(event) => updateSection1("tag", event.target.value)}
-                          placeholder="e.g. New Arrival"
+                          value={copyData.section_1.tag ?? ""}
+                          onChange={(event) => updateSection1("tag", event.target.value.trim() || null)}
+                          placeholder={tc("tagPlaceholder")}
                         />
                       </Field>
                       <Field>
                         <FieldLabel>
-                          <FieldTitle>Badge</FieldTitle>
+                          <FieldTitle>{tc("badge")}</FieldTitle>
                         </FieldLabel>
                         <Input
                           value={copyData.section_1.badge_text ?? ""}
                           onChange={(event) =>
                             updateSection1("badge_text", event.target.value || null)
                           }
-                          placeholder="e.g. –20% OFF"
+                          placeholder={tc("badgePlaceholder")}
                         />
                       </Field>
                     </div>
@@ -494,12 +356,12 @@ export function LandingPageGeneratorForm() {
 
                 <div className="space-y-3">
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Conversion section
+                    {tr("conversionSection")}
                   </p>
                   <FieldGroup>
                     <Field>
                       <FieldLabel>
-                        <FieldTitle>Headline</FieldTitle>
+                        <FieldTitle>{tc("headline")}</FieldTitle>
                       </FieldLabel>
                       <Input
                         value={copyData.section_3.headline}
@@ -508,7 +370,7 @@ export function LandingPageGeneratorForm() {
                     </Field>
                     <Field>
                       <FieldLabel>
-                        <FieldTitle>Subheadline</FieldTitle>
+                        <FieldTitle>{tc("subheadline")}</FieldTitle>
                       </FieldLabel>
                       <Input
                         value={copyData.section_3.subheadline}
@@ -518,35 +380,35 @@ export function LandingPageGeneratorForm() {
                     <div className="grid grid-cols-2 gap-3">
                       <Field>
                         <FieldLabel>
-                          <FieldTitle>CTA text</FieldTitle>
+                          <FieldTitle>{tc("ctaText")}</FieldTitle>
                         </FieldLabel>
                         <Input
                           value={copyData.section_3.cta}
                           onChange={(event) => updateSection3("cta", event.target.value)}
-                          placeholder="e.g. Shop Now"
+                          placeholder={tc("ctaPlaceholder")}
                         />
                       </Field>
                       <Field>
                         <FieldLabel>
-                          <FieldTitle>Displayed price</FieldTitle>
+                          <FieldTitle>{tr("displayedPrice")}</FieldTitle>
                         </FieldLabel>
                         <Input
                           value={copyData.section_3.price}
                           onChange={(event) => updateSection3("price", event.target.value)}
-                          placeholder="e.g. $29.99"
+                          placeholder={tc("pricePlaceholder")}
                         />
                       </Field>
                     </div>
                     <Field>
                       <FieldLabel>
-                        <FieldTitle>Shop info</FieldTitle>
+                        <FieldTitle>{tc("shopInfo")}</FieldTitle>
                       </FieldLabel>
                       <Input
                         value={copyData.section_3.shop_info ?? ""}
                         onChange={(event) =>
                           updateSection3("shop_info", event.target.value || null)
                         }
-                        placeholder="e.g. Free shipping · 30-day returns"
+                        placeholder={tc("shopInfoPlaceholder")}
                       />
                     </Field>
                   </FieldGroup>
@@ -558,14 +420,12 @@ export function LandingPageGeneratorForm() {
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
-                    <CardTitle className="text-base">Features</CardTitle>
-                    <CardDescription>
-                      Edit, add, or remove product feature cards.
-                    </CardDescription>
+                    <CardTitle className="text-base">{tc("features")}</CardTitle>
+                    <CardDescription>{tr("featuresDesc")}</CardDescription>
                   </div>
                   <Button variant="outline" size="sm" onClick={addFeature}>
-                    <Plus className="size-3.5 mr-1" />
-                    Add
+                    <Plus className="size-3.5 me-1" />
+                    {tc("add")}
                   </Button>
                 </div>
               </CardHeader>
@@ -578,23 +438,23 @@ export function LandingPageGeneratorForm() {
                     <div className="flex-1 grid grid-cols-2 gap-2">
                       <div className="space-y-1">
                         <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
-                          Label
+                          {tc("label")}
                         </p>
                         <Input
                           value={featureItem.text}
                           onChange={(event) => updateFeature(featureIndex, "text", event.target.value)}
-                          placeholder="e.g. Waterproof Design"
+                          placeholder={tc("labelPlaceholder")}
                           className="h-8 text-sm"
                         />
                       </div>
                       <div className="space-y-1">
                         <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
-                          Visual hint
+                          {tc("visualHint")}
                         </p>
                         <Input
                           value={featureItem.visual}
                           onChange={(event) => updateFeature(featureIndex, "visual", event.target.value)}
-                          placeholder="Visual concept for AI"
+                          placeholder={tc("visualHintPlaceholder")}
                           className="h-8 text-sm"
                         />
                       </div>
@@ -618,19 +478,19 @@ export function LandingPageGeneratorForm() {
                     setFeatures([]);
                   }}
                 >
-                  <ChevronLeft className="size-4 mr-1" />
-                  Back
+                  <ChevronLeft className="size-4 me-1" />
+                  {tc("back")}
                 </Button>
                 <Button onClick={handleGenerateDesign} disabled={isDesignPending}>
                   {isDesignPending ? (
                     <>
-                      <Loader2 className="size-4 mr-2 animate-spin" />
-                      Generating design…
+                      <Loader2 className="size-4 me-2 animate-spin" />
+                      {tc("generatingDesign")}
                     </>
                   ) : (
                     <>
-                      Generate design & image
-                      <ChevronRight className="size-4 ml-1" />
+                      {tc("generateDesignAndImage")}
+                      <ChevronRight className="size-4 ms-1" />
                     </>
                   )}
                 </Button>
@@ -652,18 +512,18 @@ export function LandingPageGeneratorForm() {
             )}
             <img
               src={result.imageDataUrl}
-              alt="Generated landing page"
+              alt={tc("generatedAltLanding")}
               className="w-full h-auto object-contain"
               style={{ display: isImageLoaded ? "block" : "none" }}
               onLoad={() => setIsImageLoaded(true)}
             />
             <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-2">
               <Button size="sm" variant="outline" onClick={reset} className="bg-background/90 backdrop-blur-sm shadow-sm">
-                Start over
+                {tc("startOver")}
               </Button>
               <Button size="sm" variant="secondary" onClick={handleDownloadImage} className="shadow-sm">
-                <Download className="size-4 mr-1.5" />
-                Download
+                <Download className="size-4 me-1.5" />
+                {tc("download")}
               </Button>
             </div>
           </div>

@@ -5,7 +5,7 @@ import { z } from "zod";
 import { fileToBase64 } from "@/lib/utils";
 
 export const COPY_RULES = {
-  tag: "Short product tag or category label; keep minimal. Use empty string if none.",
+  tag: "Use null by default. Only add a short product category label if it strongly improves clarity.",
   price: "Price as shown or inferred from image; use empty string if unknown.",
   section1Headline: "Hero headline specific to THIS product. Never generic. Max 5 words—short, punchy, impactful.",
   section1Subheadline: "Supporting text expanding on the hero headline, specific to THIS product. Max 10 words.",
@@ -35,7 +35,7 @@ export const adCopyOutputSchema = z.object({
     .object({
       headline: z.string().describe(COPY_RULES.section1Headline),
       subheadline: z.string().describe(COPY_RULES.section1Subheadline),
-      tag: z.string().describe(COPY_RULES.tag),
+      tag: z.string().nullable().describe(COPY_RULES.tag),
       badge_text: z.string().nullable().describe(COPY_RULES.badgeText),
     })
     .describe("Hero section content"),

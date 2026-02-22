@@ -7,34 +7,36 @@ import { featuresOutputSchema } from "./features";
 
 export const designerSystemPrompt = `RULES:
 1. PRODUCT IDENTITY: Identical product across all 3 zones — same packaging, colors, label, fit, size, demographic. Only angle/context changes. State exact fit in every visual_prompt_english.
-2. UNIFIED CANVAS: One multi-layer background system spanning top-to-bottom with no resets or seams. Three layers: (a) multi-stop gradient using product-extracted hex values only, (b) grain/noise/halftone texture overlay, (c) radial or angular light blooms at key focal points. Motif progresses: 4–6% opacity in Zone 1 → 8–10% in Zone 2 → 12–14% in Zone 3.
-3. BACKGROUND COMPLEXITY: Never use a plain solid color or simple two-stop gradient. Minimum 4 gradient stops, directional light sources, named texture type. Per-section background field = zone-local atmospheric treatment layered on top of the global system, never a replacement.
-4. MOTIF DERIVATION: Motif derived from a physical product attribute (material texture, packaging geometry, brand mark silhouette). Name exact geometric form and tiling spec (size, rotation, repeat).
-5. FULL COVERAGE: Every zone fully filled — no empty corners, no dead whitespace.
-6. TYPOGRAPHY: One Google Font covering Latin and Arabic (Cairo, Tajawal, Almarai, IBM Plex Arabic, or Noto Sans Arabic). accent_hex = highlight_hex = cta_hex.
-7. NO IMAGE-IN-IMAGE: No device frames, no screen mockups, no photo-within-photo. All shots direct and full-bleed.
-8. HERO SQUARE: Section 1 is 1:1 — height equals width. Sections 2 and 3 have no fixed height; they expand to fit their content.
-9. CTA DOMINANCE: Section 3 CTA is the most visually dominant element — min 52px height, vivid solid brand color, glow/shadow. Price badge directly adjacent. Product in Section 3 MUST be front-facing, label legible, tilted 8–12° toward the viewer — ownership psychology: the viewer feels "this is mine."
-10. tag_visible = false when tag is empty.
+2. BACKGROUND REFLECTS THE PRODUCT: The background must represent an atmosphere or environment related to the product — not a generic gradient. environment_atmosphere describes a real setting or mood where the product belongs (e.g. soft bathroom shelf with natural light, gym floor with overhead glow, minimal kitchen counter, bedroom vanity). The multi-layer system (gradient, texture, light blooms, motif) is built from product colors and layered on top of this atmosphere so the canvas feels product-specific and conversion-focused. Never use a plain solid or abstract two-stop gradient as the only background — the background should reflect where or how the product is used.
+3. UNIFIED CANVAS: One multi-layer background system spanning top-to-bottom with no resets or seams. Three layers: (a) multi-stop gradient using product-extracted hex values only, (b) grain/noise/halftone texture overlay, (c) radial or angular light blooms at key focal points. Motif progresses: 4–6% opacity in Zone 1 → 8–10% in Zone 2 → 12–14% in Zone 3.
+4. BACKGROUND COMPLEXITY: Never use a plain solid color or simple two-stop gradient. Minimum 4 gradient stops, directional light sources, named texture type. Per-section background field = zone-local atmospheric treatment layered on top of the global system, never a replacement.
+5. MOTIF DERIVATION: Motif derived from a physical product attribute (material texture, packaging geometry, brand mark silhouette). Name exact geometric form and tiling spec (size, rotation, repeat).
+6. FULL COVERAGE: Every zone fully filled — no empty corners, no dead whitespace.
+7. TYPOGRAPHY: One Google Font covering Latin and Arabic (Cairo, Tajawal, Almarai, IBM Plex Arabic, or Noto Sans Arabic). accent_hex = highlight_hex = cta_hex.
+8. NO IFRAME OR PICTURE-IN-PICTURE: Never show the product inside an iframe, picture-in-picture, device frame, screen mockup, or any embedded frame. The product must sit directly on the canvas — never inside a second image or window. Always show the product in use (worn, in hand, on a surface in the environment, applied) so it triggers emotional desire and conversion.
+9. HERO SQUARE: Section 1 is 1:1 — height equals width. Sections 2 and 3 have no fixed height; they expand to fit their content.
+10. CTA SECTION = EMOTIONAL DESIRE: Section 3 (Conversion) must show the product in use — worn, in place, or used (e.g. worn on body, in hand, on a surface in the environment, applied to skin). product_in_use_direction describes this. Triggers "I want that" and conversion. CTA is the most visually dominant element — min 52px height, vivid solid brand color, glow/shadow. Price badge directly adjacent.
+11. tag_visible = false when tag is null or empty.
 
 OUTPUT: Styling only — no copy text, no headlines, no CTA text, no feature text. highlighted_words: 1–3 exact words from provided copy. features_items: one visual_concept per feature slot.`;
 
 export const designerUserPrompt = `You are a designer for a single-canvas product landing page. Output ONLY styling, layout, typography, colors, and visual direction — no copy text.
 
-STEP 1 — Background architecture:
-a) Extract 5–7 dominant hex values from the product images (packaging, material, label, surface).
-b) Build background_gradient: using extracted hexes, with named direction.
-c) Identify grain/texture type matching the product material (options: fine-grain-noise, halftone-dots, linen-weave, brushed-metal-lines, cross-hatch, stipple, micro-diamond). Name it exactly.
-d) Define 2–3 radial light blooms positioned where the product sits per zone, using a lighter tint of the brand accent.
-e) Derive the repeating motif from a physical product attribute. Name exact geometric form and tiling spec (size, rotation, repeat). This motif tiles continuously and never resets.
+STEP 1 — Environment atmosphere (background reflects the product):
+a) Choose environment_atmosphere: a real setting or mood where the product would be used or seen (e.g. soft bathroom shelf with natural light, gym floor with overhead glow, minimal kitchen counter, bedroom vanity, office desk with warm lamp). Not abstract — a specific product-appropriate atmosphere that the background will suggest. The gradient, texture, and light will be layered on top of this so the canvas feels cohesive and product-specific.
+b) Extract 5–7 dominant hex values from the product images (packaging, material, label, surface).
+c) Build background_gradient: using extracted hexes, with named direction — layered over the environment atmosphere for mood.
+d) Identify grain/texture type matching the product material (options: fine-grain-noise, halftone-dots, linen-weave, brushed-metal-lines, cross-hatch, stipple, micro-diamond). Name it exactly.
+e) Define 2–3 radial light blooms positioned where the product sits per zone, using a lighter tint of the brand accent.
+f) Derive the repeating motif from a physical product attribute. Name exact geometric form and tiling spec (size, rotation, repeat). This motif tiles continuously and never resets.
 
 STEP 2 — Continuity:
-Write one paragraph describing how gradient + texture + light blooms + motif connect across all 3 zones as one unbroken visual system.
+Write one paragraph describing how environment_atmosphere + gradient + texture + light blooms + motif connect across all 3 zones as one unbroken visual system.
 
 SECTION ROLES:
 - Section 1 (Hero — 1:1 square): Product 55–70% of zone height. Define positions and styles for headline/subheadline/tag/badge. highlighted_words: 1–3 exact words from section_1 copy.
 - Section 2 (Features — natural height): Product at different angle, ≥35% of height. features_items: one visual_concept per feature slot.
-- Section 3 (Conversion — natural height): OWNERSHIP TRIGGER — product_position: front-center, slightly forward-tilted toward viewer (8–12°) as if being handed to them. product_treatment: sharp full clarity, label fully readable, strong cast shadow directly beneath product (grounding effect) — no blur, no vignette on product itself. No scene, no box, no environmental frame. Define cta_position, cta_style (vivid solid brand color, bold, glow), price_position, price_style. highlighted_words: 1–3 exact words from section_3 copy that reinforce possession ("yours", "get", "now", or equivalent in target language).
+- Section 3 (Conversion — natural height): EMOTIONAL DESIRE TRIGGER — Show the product in use so the client converts. Define product_in_use_direction: how the product is shown in use (e.g. worn on wrist, in hand, on a surface in the environment, applied to skin, on a bed). Product sits directly on the canvas in that context — never iframe, picture-in-picture, or inside a frame/window. product_position and product_treatment: sharp clarity, label readable, strong cast shadow beneath product. Define cta_position, cta_style (vivid solid brand color, bold, glow), price_position, price_style. highlighted_words: 1–3 exact words from section_3 copy that reinforce possession ("yours", "get", "now", or equivalent in target language).
 
 Ad copy and features (context only):
 {adCopy}
@@ -64,6 +66,7 @@ export const backgroundSystemSchema = z.object({
 });
 
 export const designerOutputSchema = z.object({
+  environment_atmosphere: z.string().describe("Product-appropriate setting or mood the background should reflect: e.g. soft bathroom shelf with natural light, gym floor with overhead glow, minimal kitchen counter. The canvas background suggests this atmosphere; gradient/texture/light sit on top."),
   background_motif: z.string(),
   background_system: backgroundSystemSchema,
   accent_color: z.string(),
@@ -97,6 +100,7 @@ export const designerOutputSchema = z.object({
     product_treatment: z.string(),
   }),
   section_3: sectionBaseSchema.extend({
+    product_in_use_direction: z.string().describe("How the product is shown in use for conversion: e.g. worn on body, in hand, on a surface in the environment, applied to skin. Triggers emotional desire and 'I want that'. Never iframe or picture-in-picture."),
     cta_position: z.string(),
     cta_style: z.string(),
     price_position: z.string(),
@@ -138,6 +142,7 @@ const fullSection3Schema = sectionBaseSchema.extend({
   headline: z.string(),
   subheadline: z.string(),
   cta_text: z.string(),
+  product_in_use_direction: z.string().optional(),
   cta_position: z.string(),
   cta_style: z.string(),
   price_text: z.string(),
@@ -149,6 +154,7 @@ const fullSection3Schema = sectionBaseSchema.extend({
 });
 
 export const fullDesignerSpecSchema = z.object({
+  environment_atmosphere: z.string().optional(),
   background_motif: z.string(),
   background_system: backgroundSystemSchema,
   accent_color: z.string(),
@@ -185,7 +191,7 @@ export function mergeDesignerWithCopyAndFeatures(
       headline: copy.section_1.headline,
       subheadline: copy.section_1.subheadline,
       badge_text: copy.section_1.badge_text ?? "",
-      tag_text: copy.section_1.tag,
+      tag_text: copy.section_1.tag ?? "",
     },
     section_2: {
       ...designer.section_2,

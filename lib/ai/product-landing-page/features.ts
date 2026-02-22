@@ -8,7 +8,7 @@ export const FEATURE_RULES = {
   productOnly:
     "Focus ONLY on the actual product and its functional benefits. Ignore models, hands, props, background, logos, or UI unless they directly reflect a product feature.",
   visual:
-    "One clear visual concept for this feature. Describe what should appear in the illustration or photo (objects, composition, and key details). No full sentences; use concise visual phrases.",
+    "One clear visual concept for this feature, in the same language as the landing page copy. Describe what should appear in the illustration or photo (objects, composition, and key details). No full sentences; use concise visual phrases.",
   text:
     "Short feature label (2–5 words) that could sit as a bold title on a feature card. Make it specific to this product, not a generic marketing phrase.",
 } as const;

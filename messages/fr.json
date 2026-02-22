@@ -1,0 +1,245 @@
+{
+  "common": {
+    "back": "Retour",
+    "next": "Suivant",
+    "startOver": "Recommencer",
+    "generating": "Génération…",
+    "download": "Télécharger",
+    "regenerate": "Régénérer",
+    "add": "Ajouter",
+    "copy": "Copier",
+    "copied": "Copié",
+    "productImages": "Images du produit",
+    "productName": "Nom du produit",
+    "productNamePlaceholder": "ex. Casque NovaX Pro",
+    "language": "Langue",
+    "arabicDialect": "Dialecte arabe",
+    "price": "Prix",
+    "priceOptional": "Prix (optionnel)",
+    "pricePlaceholder": "29.99",
+    "customInstructions": "Instructions personnalisées (optionnel)",
+    "generateDesignAndImage": "Générer le design et l'image",
+    "generatingDesign": "Génération du design…",
+    "headline": "Titre principal",
+    "subheadline": "Sous-titre",
+    "tag": "Étiquette",
+    "tagPlaceholder": "ex. Nouvelle Arrivée",
+    "badge": "Badge",
+    "badgePlaceholder": "ex. –20% DE REMISE",
+    "ctaText": "Texte du CTA",
+    "ctaPlaceholder": "ex. Acheter Maintenant",
+    "shopInfo": "Info boutique",
+    "shopInfoPlaceholder": "ex. Livraison gratuite · Retours sous 30 jours",
+    "features": "Caractéristiques",
+    "label": "Libellé",
+    "labelPlaceholder": "ex. Design Étanche",
+    "visualHint": "Indice visuel",
+    "visualHintPlaceholder": "Concept visuel pour l'IA",
+    "generatedAltAd": "Création publicitaire générée",
+    "generatedAltLanding": "Page d'atterrissage générée",
+    "stepN": "Étape {step}",
+    "stepOfThree": "Étape {step} sur 3",
+    "generatingCopy": "Génération du texte",
+    "previewLayout": "Aperçu de la mise en page",
+    "pickingDesignSystem": "Choix du système de design",
+    "colorTypographyAesthetic": "Couleurs, typographie & esthétique",
+    "choosingColors": "Choix des couleurs…"
+  },
+  "arabicDialects": {
+    "standard": "Standard",
+    "algerian": "Algérien",
+    "tunisian": "Tunisien",
+    "moroccan": "Marocain"
+  },
+  "nav": {
+    "adCopies": "Textes publicitaires",
+    "adCreatives": "Créations publicitaires",
+    "landingPages": "Pages d'atterrissage",
+    "editImages": "Modifier les images"
+  },
+  "languageSwitcher": {
+    "en": "English",
+    "fr": "Français",
+    "ar": "العربية"
+  },
+  "adCopiesPage": {
+    "title": "Textes publicitaires",
+    "description": "Téléchargez des photos de produits, choisissez un angle marketing et générez plusieurs textes publicitaires prêts à l'emploi avec votre ton, langue et format."
+  },
+  "adCreativesPage": {
+    "title": "Créations publicitaires",
+    "description": "Générez une création publicitaire à partir d'images de produits. Choisissez votre format et l'IA construit toute la composition."
+  },
+  "landingPagesPage": {
+    "title": "Pages d'atterrissage",
+    "description": "Générez une page d'atterrissage à partir d'images de produits. Le résultat est une image."
+  },
+  "editImagesPage": {
+    "title": "Modifier les images",
+    "description": "Modifiez et améliorez vos images de produits avec des outils alimentés par l'IA."
+  },
+  "adCopies": {
+    "steps": {
+      "product": "Produit",
+      "productDesc": "Images & nom",
+      "settings": "Paramètres",
+      "settingsDesc": "Ton & style",
+      "pricing": "Tarification",
+      "pricingDesc": "Prix & format",
+      "generate": "Générer",
+      "copies": "Copies"
+    },
+    "form": {
+      "productDetails": "Détails du produit",
+      "productDetailsDesc": "Téléchargez les photos du produit et entrez le nom du produit.",
+      "toneAndStyle": "Ton & style",
+      "toneAndStyleDesc": "Choisissez le ton et la préférence d'émojis.",
+      "pricingAndFormat": "Tarification & format",
+      "pricingAndFormatDesc": "Définissez le prix et les options de format du texte publicitaire.",
+      "tone": "Ton",
+      "emojis": "Émojis",
+      "withoutEmojis": "Sans émojis",
+      "withEmojis": "Avec émojis",
+      "copySize": "Taille du texte",
+      "numberOfCopies": "Nombre de copies",
+      "customPlaceholder": "ex. Mettre l'accent sur l'angle écologique, utiliser l'urgence…",
+      "generateAngles": "Générer les angles"
+    },
+    "tones": {
+      "professional": "Professionnel",
+      "professionalDesc": "Autoritaire & digne de confiance",
+      "playful": "Ludique",
+      "playfulDesc": "Amusant, énergique & léger",
+      "luxury": "Luxe",
+      "luxuryDesc": "Premium, exclusif & élégant",
+      "urgent": "Urgent",
+      "urgentDesc": "Basé sur la rareté & incitant à l'action",
+      "casual": "Décontracté",
+      "casualDesc": "Amical, accessible & quotidien",
+      "inspirational": "Inspirant",
+      "inspirationalDesc": "Motivant & stimulant"
+    },
+    "sizes": {
+      "short": "Court",
+      "shortDesc": "Titre + 1 ligne + CTA",
+      "medium": "Moyen",
+      "mediumDesc": "Titre + 2–3 lignes + CTA",
+      "long": "Long",
+      "longDesc": "Paragraphe complet + fonctionnalités + CTA"
+    },
+    "generating": {
+      "title": "Génération des angles",
+      "description": "L'IA analyse votre produit et conçoit des angles marketing…",
+      "studyingImages": "Étude des images du produit",
+      "identifyingAudience": "Identification du public cible",
+      "craftingAngles": "Création d'angles stratégiques",
+      "anglePreview": "Aperçu de l'angle"
+    },
+    "angles": {
+      "chooseTitle": "Choisissez votre angle",
+      "chooseDescription": "L'IA a trouvé {count} angles marketing. Choisissez celui qui convient le mieux à votre campagne.",
+      "writing": "Rédaction…"
+    },
+    "copiesGenerating": {
+      "title": "Rédaction de {count} {count, plural, one {texte publicitaire} other {textes publicitaires}}",
+      "description": "L'IA rédige des variations à fort taux de conversion pour votre angle sélectionné…"
+    },
+    "results": {
+      "title": "{count} {count, plural, one {texte publicitaire prêt} other {textes publicitaires prêts}}",
+      "withEmojis": "avec émojis",
+      "noEmojis": "sans émojis",
+      "changeAngle": "Changer d'angle",
+      "copyLabel": "Copie {index}"
+    }
+  },
+  "adCreative": {
+    "steps": {
+      "step1Label": "Configuration du produit",
+      "step1Desc": "Téléchargez des photos de produit claires et entrez le nom du produit.",
+      "step2Label": "Langue & dialecte",
+      "step2Desc": "Choisissez la langue du texte de la création publicitaire.",
+      "step3Label": "Prix & format",
+      "step3Desc": "Définissez le ratio du format publicitaire (et optionnellement le prix), puis lancez la génération.",
+      "generatingTask1": "Analyse des images produit",
+      "generatingTask2": "Rédaction du texte publicitaire",
+      "generatingTask3": "Création des libellés de fonctionnalités"
+    },
+    "designSkeleton": {
+      "task1": "Choix de la palette de couleurs",
+      "task2": "Choix de la typographie",
+      "task3": "Construction du système d'arrière-plan"
+    },
+    "form": {
+      "productDetails": "Détails du produit",
+      "productDetailsDesc": "Téléchargez vos images de produit et entrez le nom du produit.",
+      "pricingAndFormat": "Tarification & format",
+      "pricingAndFormatDesc": "Définissez le prix, la devise et le format publicitaire.",
+      "adFormat": "Format publicitaire",
+      "customPlaceholder": "ex. Style luxe audacieux, cibler la Gen Z…",
+      "generateCopy": "Générer le texte"
+    },
+    "generating": {
+      "title": "Génération du texte publicitaire",
+      "description": "L'IA analyse votre produit et rédige le texte de la création publicitaire…",
+      "analyzingImages": "Analyse des images du produit",
+      "writingCopy": "Rédaction du titre et du texte",
+      "craftingFeatures": "Création des libellés de fonctionnalités",
+      "copyPreview": "Aperçu du texte"
+    },
+    "review": {
+      "adCopy": "Texte publicitaire",
+      "adCopyDesc": "Modifiez le texte généré avant de créer le design.",
+      "featuresDesc": "Modifiez ou ajoutez les libellés des fonctionnalités affichés sur la publicité."
+    }
+  },
+  "landingPage": {
+    "steps": {
+      "step1Label": "Configuration du produit",
+      "step1Desc": "Téléchargez des photos de produit claires et entrez le nom du produit. L'IA les analysera pour rédiger un texte convaincant.",
+      "step2Label": "Langue & dialecte",
+      "step2Desc": "Choisissez la langue de votre page d'atterrissage. Si l'arabe est sélectionné, vous pouvez aussi choisir un dialecte régional.",
+      "step3Label": "Prix & devise",
+      "step3Desc": "Définissez le prix et la devise du produit, puis lancez la génération — l'IA rédigera le texte et construira la liste des fonctionnalités.",
+      "generatingTask1": "Analyse des images produit",
+      "generatingTask2": "Rédaction des titres et du texte",
+      "generatingTask3": "Création des cartes de fonctionnalités"
+    },
+    "designSkeleton": {
+      "task1": "Vérification de la palette de couleurs",
+      "task2": "Choix de la typographie et de l'esthétique",
+      "task3": "Construction du dégradé et du système de motifs"
+    },
+    "form": {
+      "productDetails": "Détails du produit",
+      "productDetailsDesc": "Téléchargez vos images de produit et entrez le nom du produit.",
+      "pricing": "Tarification",
+      "pricingDesc": "Définissez le prix et la devise du produit.",
+      "customPlaceholder": "ex. Mettre l'accent sur la durabilité, cibler les jeunes professionnels…",
+      "generateCopyAndFeatures": "Générer texte & fonctionnalités"
+    },
+    "generating": {
+      "title": "Génération du texte et des fonctionnalités",
+      "description": "L'IA analyse votre produit et rédige le contenu de la page d'atterrissage…",
+      "analyzingImages": "Analyse des images du produit",
+      "writingHeadlines": "Rédaction des titres de la section hero",
+      "craftingFeatures": "Création des cartes de fonctionnalités",
+      "heroCopyPreview": "Aperçu du texte hero",
+      "featureCards": "Cartes de fonctionnalités"
+    },
+    "review": {
+      "copy": "Texte",
+      "copyDesc": "Modifiez le texte généré avant de créer le design.",
+      "heroSection": "Section hero",
+      "conversionSection": "Section conversion",
+      "displayedPrice": "Prix affiché",
+      "featuresDesc": "Modifiez, ajoutez ou supprimez les cartes de fonctionnalités du produit."
+    }
+  },
+  "phases": {
+    "product": "Produit",
+    "language": "Langue",
+    "pricing": "Tarification",
+    "review": "Révision",
+    "design": "Design"
+  }
+}

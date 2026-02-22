@@ -1,0 +1,245 @@
+{
+  "common": {
+    "back": "رجوع",
+    "next": "التالي",
+    "startOver": "البدء من جديد",
+    "generating": "جارٍ التوليد…",
+    "download": "تحميل",
+    "regenerate": "إعادة التوليد",
+    "add": "إضافة",
+    "copy": "نسخ",
+    "copied": "تم النسخ",
+    "productImages": "صور المنتج",
+    "productName": "اسم المنتج",
+    "productNamePlaceholder": "مثال: سماعات NovaX Pro",
+    "language": "اللغة",
+    "arabicDialect": "اللهجة العربية",
+    "price": "السعر",
+    "priceOptional": "السعر (اختياري)",
+    "pricePlaceholder": "29.99",
+    "customInstructions": "تعليمات مخصصة (اختياري)",
+    "generateDesignAndImage": "توليد التصميم والصورة",
+    "generatingDesign": "جارٍ توليد التصميم…",
+    "headline": "العنوان الرئيسي",
+    "subheadline": "العنوان الفرعي",
+    "tag": "الوسم",
+    "tagPlaceholder": "مثال: وصول جديد",
+    "badge": "الشارة",
+    "badgePlaceholder": "مثال: خصم 20%–",
+    "ctaText": "نص زر الإجراء",
+    "ctaPlaceholder": "مثال: اشترِ الآن",
+    "shopInfo": "معلومات المتجر",
+    "shopInfoPlaceholder": "مثال: شحن مجاني · إرجاع خلال 30 يوم",
+    "features": "المميزات",
+    "label": "التسمية",
+    "labelPlaceholder": "مثال: تصميم مقاوم للماء",
+    "visualHint": "تلميح بصري",
+    "visualHintPlaceholder": "مفهوم بصري للذكاء الاصطناعي",
+    "generatedAltAd": "إبداع إعلاني مولّد",
+    "generatedAltLanding": "صفحة هبوط مولّدة",
+    "stepN": "الخطوة {step}",
+    "stepOfThree": "الخطوة {step} من 3",
+    "generatingCopy": "جارٍ توليد النص",
+    "previewLayout": "معاينة التخطيط",
+    "pickingDesignSystem": "اختيار نظام التصميم",
+    "colorTypographyAesthetic": "الألوان والطباعة والجمالية",
+    "choosingColors": "جارٍ اختيار الألوان…"
+  },
+  "arabicDialects": {
+    "standard": "الفصحى",
+    "algerian": "جزائري",
+    "tunisian": "تونسي",
+    "moroccan": "مغربي"
+  },
+  "nav": {
+    "adCopies": "النصوص الإعلانية",
+    "adCreatives": "الإبداعات الإعلانية",
+    "landingPages": "صفحات الهبوط",
+    "editImages": "تعديل الصور"
+  },
+  "languageSwitcher": {
+    "en": "English",
+    "fr": "Français",
+    "ar": "العربية"
+  },
+  "adCopiesPage": {
+    "title": "النصوص الإعلانية",
+    "description": "قم بتحميل صور المنتج، اختر زاوية تسويقية، وأنشئ عدة نصوص إعلانية جاهزة للاستخدام بالنبرة واللغة والتنسيق الذي تريده."
+  },
+  "adCreativesPage": {
+    "title": "الإبداعات الإعلانية",
+    "description": "أنشئ إبداعاً إعلانياً من صور المنتج. اختر التنسيق والذكاء الاصطناعي يبني التكوين بالكامل."
+  },
+  "landingPagesPage": {
+    "title": "صفحات الهبوط",
+    "description": "أنشئ صفحة هبوط من صور المنتج. الناتج هو صورة."
+  },
+  "editImagesPage": {
+    "title": "تعديل الصور",
+    "description": "عدّل وحسّن صور منتجاتك باستخدام أدوات الذكاء الاصطناعي."
+  },
+  "adCopies": {
+    "steps": {
+      "product": "المنتج",
+      "productDesc": "الصور والاسم",
+      "settings": "الإعدادات",
+      "settingsDesc": "النبرة والأسلوب",
+      "pricing": "التسعير",
+      "pricingDesc": "السعر والتنسيق",
+      "generate": "توليد",
+      "copies": "النسخ"
+    },
+    "form": {
+      "productDetails": "تفاصيل المنتج",
+      "productDetailsDesc": "قم بتحميل صور المنتج وأدخل اسم المنتج.",
+      "toneAndStyle": "النبرة والأسلوب",
+      "toneAndStyleDesc": "اختر النبرة وتفضيلات الرموز التعبيرية.",
+      "pricingAndFormat": "التسعير والتنسيق",
+      "pricingAndFormatDesc": "حدد السعر وخيارات تنسيق النص الإعلاني.",
+      "tone": "النبرة",
+      "emojis": "الرموز التعبيرية",
+      "withoutEmojis": "بدون رموز تعبيرية",
+      "withEmojis": "مع رموز تعبيرية",
+      "copySize": "حجم النص",
+      "numberOfCopies": "عدد النسخ",
+      "customPlaceholder": "مثال: التركيز على الزاوية البيئية، استخدام الإلحاح…",
+      "generateAngles": "توليد الزوايا"
+    },
+    "tones": {
+      "professional": "احترافي",
+      "professionalDesc": "موثوق وذو مصداقية",
+      "playful": "مرح",
+      "playfulDesc": "ممتع، حيوي وخفيف",
+      "luxury": "فاخر",
+      "luxuryDesc": "متميز، حصري وراقٍ",
+      "urgent": "عاجل",
+      "urgentDesc": "مبني على الندرة ودافع للعمل",
+      "casual": "عفوي",
+      "casualDesc": "ودود، قريب ويومي",
+      "inspirational": "ملهم",
+      "inspirationalDesc": "محفز وتمكيني"
+    },
+    "sizes": {
+      "short": "قصير",
+      "shortDesc": "عنوان + سطر واحد + CTA",
+      "medium": "متوسط",
+      "mediumDesc": "عنوان + 2–3 أسطر + CTA",
+      "long": "طويل",
+      "longDesc": "فقرة كاملة + مميزات + CTA"
+    },
+    "generating": {
+      "title": "جارٍ توليد الزوايا",
+      "description": "الذكاء الاصطناعي يحلل منتجك ويصوغ زوايا تسويقية…",
+      "studyingImages": "دراسة صور المنتج",
+      "identifyingAudience": "تحديد الجمهور المستهدف",
+      "craftingAngles": "صياغة زوايا استراتيجية",
+      "anglePreview": "معاينة الزاوية"
+    },
+    "angles": {
+      "chooseTitle": "اختر زاويتك",
+      "chooseDescription": "وجد الذكاء الاصطناعي {count} زاوية تسويقية. اختر الأنسب لحملتك.",
+      "writing": "جارٍ الكتابة…"
+    },
+    "copiesGenerating": {
+      "title": "كتابة {count} {count, plural, one {نص إعلاني} other {نصوص إعلانية}}",
+      "description": "الذكاء الاصطناعي يصوغ نسخاً عالية التحويل للزاوية المختارة…"
+    },
+    "results": {
+      "title": "{count} {count, plural, one {نص إعلاني جاهز} other {نصوص إعلانية جاهزة}}",
+      "withEmojis": "مع رموز تعبيرية",
+      "noEmojis": "بدون رموز تعبيرية",
+      "changeAngle": "تغيير الزاوية",
+      "copyLabel": "نسخة {index}"
+    }
+  },
+  "adCreative": {
+    "steps": {
+      "step1Label": "إعداد المنتج",
+      "step1Desc": "حمّل صور المنتج واضحة وأدخل اسم المنتج.",
+      "step2Label": "اللغة واللهجة",
+      "step2Desc": "اختر لغة نص الإبداع الإعلاني.",
+      "step3Label": "التسعير والتنسيق",
+      "step3Desc": "حدد نسبة تنسيق الإعلان (والسعر اختياريًا) ثم اضغط توليد.",
+      "generatingTask1": "مسح صور المنتج",
+      "generatingTask2": "كتابة النص الإعلاني",
+      "generatingTask3": "بناء تسميات المميزات"
+    },
+    "designSkeleton": {
+      "task1": "اختيار لوحة الألوان",
+      "task2": "اختيار الطباعة",
+      "task3": "بناء نظام الخلفية"
+    },
+    "form": {
+      "productDetails": "تفاصيل المنتج",
+      "productDetailsDesc": "قم بتحميل صور المنتج وأدخل اسم المنتج.",
+      "pricingAndFormat": "التسعير والتنسيق",
+      "pricingAndFormatDesc": "حدد السعر والعملة وتنسيق الإعلان.",
+      "adFormat": "تنسيق الإعلان",
+      "customPlaceholder": "مثال: إحساس فاخر جريء، استهداف الجيل Z…",
+      "generateCopy": "توليد النص"
+    },
+    "generating": {
+      "title": "جارٍ توليد النص الإعلاني",
+      "description": "الذكاء الاصطناعي يحلل منتجك ويكتب نص الإبداع الإعلاني…",
+      "analyzingImages": "تحليل صور المنتج",
+      "writingCopy": "كتابة العنوان والنص",
+      "craftingFeatures": "صياغة تسميات المميزات",
+      "copyPreview": "معاينة النص"
+    },
+    "review": {
+      "adCopy": "النص الإعلاني",
+      "adCopyDesc": "عدّل النص المولّد قبل إنشاء التصميم.",
+      "featuresDesc": "عدّل أو أضف تسميات المميزات المعروضة على الإعلان."
+    }
+  },
+  "landingPage": {
+    "steps": {
+      "step1Label": "إعداد المنتج",
+      "step1Desc": "حمّل صور منتج واضحة وأدخل اسم المنتج. سيقوم الذكاء الاصطناعي بتحليلها لصياغة نص مقنع.",
+      "step2Label": "اللغة واللهجة",
+      "step2Desc": "اختر لغة صفحة الهبوط. إذا اخترت العربية يمكنك اختيار لهجة إقليمية.",
+      "step3Label": "السعر والعملة",
+      "step3Desc": "حدد سعر المنتج والعملة ثم اضغط توليد — سيكتب الذكاء الاصطناعي النص ويبني قائمة المميزات.",
+      "generatingTask1": "مسح صور المنتج",
+      "generatingTask2": "كتابة العناوين والنص",
+      "generatingTask3": "بناء بطاقات المميزات"
+    },
+    "designSkeleton": {
+      "task1": "التحقق من لوحة الألوان المناسبة",
+      "task2": "اختيار الطباعة والجمالية",
+      "task3": "بناء نظام التدرج والزخارف"
+    },
+    "form": {
+      "productDetails": "تفاصيل المنتج",
+      "productDetailsDesc": "قم بتحميل صور المنتج وأدخل اسم المنتج.",
+      "pricing": "التسعير",
+      "pricingDesc": "حدد سعر المنتج والعملة.",
+      "customPlaceholder": "مثال: التركيز على الاستدامة، استهداف المهنيين الشباب…",
+      "generateCopyAndFeatures": "توليد النص والمميزات"
+    },
+    "generating": {
+      "title": "جارٍ توليد النص والمميزات",
+      "description": "الذكاء الاصطناعي يحلل منتجك ويكتب محتوى صفحة الهبوط…",
+      "analyzingImages": "تحليل صور المنتج",
+      "writingHeadlines": "كتابة عناوين القسم الرئيسي",
+      "craftingFeatures": "صياغة بطاقات المميزات",
+      "heroCopyPreview": "معاينة نص القسم الرئيسي",
+      "featureCards": "بطاقات المميزات"
+    },
+    "review": {
+      "copy": "النص",
+      "copyDesc": "عدّل النص المولّد قبل إنشاء التصميم.",
+      "heroSection": "القسم الرئيسي",
+      "conversionSection": "قسم التحويل",
+      "displayedPrice": "السعر المعروض",
+      "featuresDesc": "عدّل أو أضف أو احذف بطاقات مميزات المنتج."
+    }
+  },
+  "phases": {
+    "product": "المنتج",
+    "language": "اللغة",
+    "pricing": "التسعير",
+    "review": "المراجعة",
+    "design": "التصميم"
+  }
+}
