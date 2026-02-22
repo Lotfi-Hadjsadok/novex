@@ -11,9 +11,10 @@ export async function generateAnglesAction(
   dialect:       ArabicDialect,
   tone:          AdCopyTone,
   price:         string,
-  productName:   string
+  productName:   string,
+  customPrompt?: string
 ): Promise<CopyAngle[]> {
-  const angles = await generateAdCopyAngles(language, dialect, tone, price, productName, productImages);
+  const angles = await generateAdCopyAngles(language, dialect, tone, price, productName, productImages, customPrompt);
   const seen = new Set<string>();
   return angles.filter((a) => {
     if (seen.has(a.id)) return false;
@@ -32,7 +33,8 @@ export async function generateCopiesAction(
   price:         string,
   productName:   string,
   count:         number,
-  angle:         CopyAngle
+  angle:         CopyAngle,
+  customPrompt?: string
 ): Promise<GeneratedCopy[]> {
-  return await generateAdCopies(language, dialect, tone, size, useEmojis, price, productName, count, angle, productImages);
+  return await generateAdCopies(language, dialect, tone, size, useEmojis, price, productName, count, angle, productImages, customPrompt);
 }

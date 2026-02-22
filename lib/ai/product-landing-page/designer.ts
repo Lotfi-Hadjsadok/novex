@@ -37,7 +37,8 @@ SECTION ROLES:
 - Section 3 (Conversion — natural height): OWNERSHIP TRIGGER — product_position: front-center, slightly forward-tilted toward viewer (8–12°) as if being handed to them. product_treatment: sharp full clarity, label fully readable, strong cast shadow directly beneath product (grounding effect) — no blur, no vignette on product itself. No scene, no box, no environmental frame. Define cta_position, cta_style (vivid solid brand color, bold, glow), price_position, price_style. highlighted_words: 1–3 exact words from section_3 copy that reinforce possession ("yours", "get", "now", or equivalent in target language).
 
 Ad copy and features (context only):
-{adCopy}`;
+{adCopy}
+{customPromptLine}`;
 
 const sectionBaseSchema = z.object({
   panel_number: z.number(),
@@ -205,7 +206,8 @@ export function mergeDesignerWithCopyAndFeatures(
 export async function generateDesigner(
   copy: z.infer<typeof adCopyOutputSchema>,
   features: z.infer<typeof featuresOutputSchema>,
-  productImages: File[]
+  productImages: File[],
+  customPrompt?: string
 ): Promise<DesignerOutput> {
   const adCopy = {
     section_1: {
@@ -244,9 +246,14 @@ export async function generateDesigner(
   const jsonSchema = toJSONSchema(designerOutputSchema, { unrepresentable: "any" });
   const structuredDesignerModel = designerModel.withStructuredOutput(jsonSchema as Record<string, unknown>);
 
+  const customPromptLine = customPrompt?.trim()
+    ? `\n\nAdditional instructions from the user:\n${customPrompt.trim()}`
+    : "";
+
   const chain = designerPromptTemplate.pipe(structuredDesignerModel as any);
   const rawResult = await chain.invoke({
     adCopy: JSON.stringify(adCopy, null, 2),
+    customPromptLine,
   });
 
   const parsed = designerOutputSchema.parse(rawResult);

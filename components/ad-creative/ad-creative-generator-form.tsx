@@ -12,6 +12,7 @@ import {
 import { AD_ASPECT_RATIOS, getRatioCssAspect, type AdAspectRatio } from "@/types/ad-creative";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -68,10 +69,32 @@ function CopyGeneratingSkeleton() {
     <Card>
       <style>{`
         @keyframes acf-fill {
-          from { transform: scaleX(0); }
-          to   { transform: scaleX(1); }
+          0%   { width: 0%; opacity: 0; }
+          8%   { opacity: 1; }
+          45%  { width: var(--fill-pct); }
+          90%  { width: var(--fill-pct); opacity: 1; }
+          100% { width: var(--fill-pct); opacity: 0; }
         }
-        .acf-fill-bar { transform-origin: left; animation: acf-fill 1.8s ease-out forwards; }
+        @keyframes acf-shimmer {
+          0%   { background-position: -200% center; }
+          100% { background-position:  200% center; }
+        }
+        @keyframes acf-pct {
+          0%, 100% { opacity: 0.35; }
+          50%      { opacity: 0.65; }
+        }
+        .acf-fill-bar {
+          width: 0;
+          animation: acf-fill 4s ease-out infinite, acf-shimmer 2s linear infinite;
+          background: linear-gradient(90deg,
+            color-mix(in oklch, var(--primary) 70%, transparent) 0%,
+            var(--primary) 45%,
+            var(--primary) 55%,
+            color-mix(in oklch, var(--primary) 85%, transparent) 100%
+          );
+          background-size: 200% 100%;
+        }
+        .acf-pct { animation: acf-pct 2.5s ease-in-out infinite; }
       `}</style>
       <CardHeader>
         <div className="flex items-start gap-3">
@@ -102,12 +125,15 @@ function CopyGeneratingSkeleton() {
                   />
                   <span className="text-sm text-muted-foreground">{label}</span>
                 </div>
-                <span className="text-[10px] tabular-nums text-muted-foreground/50">{pct}%</span>
+                <span className="acf-pct text-[10px] tabular-nums text-muted-foreground/50">{pct}%</span>
               </div>
-              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+              <div
+                className="h-1.5 rounded-full bg-muted overflow-hidden"
+                style={{ '--fill-pct': `${pct}%` } as any}
+              >
                 <div
-                  className="acf-fill-bar h-full rounded-full"
-                  style={{ background: "hsl(var(--primary)/0.6)", width: `${pct}%`, animationDelay: `${i * 0.4}s` }}
+                  className="acf-fill-bar h-full rounded-full block"
+                  style={{ animationDelay: `${i * 0.4}s` } as any}
                 />
               </div>
             </div>
@@ -199,6 +225,7 @@ export function AdCreativeGeneratorForm() {
     dialect,       setDialect,
     price,         setPrice,
     currency,      setCurrency,
+    customPrompt,  setCustomPrompt,
     aspectRatio,   setAspectRatio,
     copyData,      setCopyData,
     updateCopy,    updateFeature,
@@ -218,8 +245,9 @@ export function AdCreativeGeneratorForm() {
         store.productImages,
         store.language,
         store.dialect,
-        `${store.price} ${store.currency}`,
-        store.productName
+        store.price.trim() ? `${store.price.trim()} ${store.currency}` : "",
+        store.productName,
+        store.customPrompt?.trim() || undefined
       );
       store.setCopyData(copy);
       return null;
@@ -234,7 +262,8 @@ export function AdCreativeGeneratorForm() {
       const d = await generateAdCreativeDesignerAction(
         store.copyData!,
         store.productImages,
-        store.aspectRatio
+        store.aspectRatio,
+        store.customPrompt?.trim() || undefined
       );
       store.setDesigner(d);
       return null;
@@ -250,7 +279,8 @@ export function AdCreativeGeneratorForm() {
         store.designer!,
         store.copyData!,
         store.productImages,
-        store.aspectRatio
+        store.aspectRatio,
+        store.customPrompt?.trim() || undefined
       );
       store.setDesigner(null);
       store.setResult(imageData);
@@ -310,7 +340,7 @@ export function AdCreativeGeneratorForm() {
                 <CardDescription>
                   {formStep === 1 && "Upload your product images and enter the product name."}
                   {formStep === 2 && "Choose the output language for your ad copy."}
-                  {formStep === 3 && "Set the price, currency, and ad format."}
+                  {formStep === 3 && (price.trim() ? "Set the price, currency, and ad format." : "Set the ad format.")}
                 </CardDescription>
               </CardHeader>
 
@@ -387,19 +417,21 @@ export function AdCreativeGeneratorForm() {
                     <>
                       <Field>
                         <FieldLabel>
-                          <FieldTitle>Price</FieldTitle>
+                          <FieldTitle>{price.trim() ? "Price" : "Price (optional)"}</FieldTitle>
                         </FieldLabel>
                         <div className="flex gap-2">
-                          <Select value={currency} onValueChange={(v) => setCurrency(v as Currency)}>
-                            <SelectTrigger className="w-24">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {CURRENCIES.map((c) => (
-                                <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          {price.trim() && (
+                            <Select value={currency} onValueChange={(v) => setCurrency(v as Currency)}>
+                              <SelectTrigger className="w-24">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {CURRENCIES.map((c) => (
+                                  <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          )}
                           <Input
                             className="flex-1"
                             type="text"
@@ -415,6 +447,17 @@ export function AdCreativeGeneratorForm() {
                           <FieldTitle>Ad format</FieldTitle>
                         </FieldLabel>
                         <AspectRatioPicker value={aspectRatio} onChange={setAspectRatio} />
+                      </Field>
+
+                      <Field>
+                        <FieldLabel>
+                          <FieldTitle>Custom instructions (optional)</FieldTitle>
+                        </FieldLabel>
+                        <Textarea
+                          placeholder="e.g. Bold luxury feel, target Gen Z…"
+                          value={customPrompt}
+                          onChange={(e) => setCustomPrompt(e.target.value)}
+                        />
                       </Field>
                     </>
                   )}
@@ -435,6 +478,10 @@ export function AdCreativeGeneratorForm() {
                   <Button onClick={() => setFormStep((formStep + 1) as 2 | 3)}>
                     Next
                     <ChevronRight className="size-4 ml-1" />
+                  </Button>
+                ) : allDone ? (
+                  <Button variant="outline" onClick={reset}>
+                    Start over
                   </Button>
                 ) : (
                   <Button onClick={handleGenerateCopy} disabled={isCopyPending}>
@@ -497,7 +544,7 @@ export function AdCreativeGeneratorForm() {
                         />
                       </Field>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className={cn("grid gap-3", copyData.price.trim() ? "grid-cols-2" : "grid-cols-1")}>
                       <Field>
                         <FieldLabel><FieldTitle>CTA text</FieldTitle></FieldLabel>
                         <Input
@@ -506,14 +553,16 @@ export function AdCreativeGeneratorForm() {
                           placeholder="e.g. Shop Now"
                         />
                       </Field>
-                      <Field>
-                        <FieldLabel><FieldTitle>Price</FieldTitle></FieldLabel>
-                        <Input
-                          value={copyData.price}
-                          onChange={(e) => updateCopy("price", e.target.value)}
-                          placeholder="e.g. $29.99"
-                        />
-                      </Field>
+                      {copyData.price.trim() && (
+                        <Field>
+                          <FieldLabel><FieldTitle>Price</FieldTitle></FieldLabel>
+                          <Input
+                            value={copyData.price}
+                            onChange={(e) => updateCopy("price", e.target.value)}
+                            placeholder="e.g. $29.99"
+                          />
+                        </Field>
+                      )}
                     </div>
                     <Field>
                       <FieldLabel><FieldTitle>Shop info</FieldTitle></FieldLabel>
@@ -605,7 +654,7 @@ export function AdCreativeGeneratorForm() {
         </div>
 
       {/* ── Right panel (canvas preview) ── */}
-      <div className="w-full shrink-0 lg:w-[360px] xl:w-[420px] lg:sticky lg:top-8">
+      <div className="w-full shrink-0 lg:w-[360px] xl:w-[420px] lg:sticky lg:top-8 lg:min-h-[520px] lg:flex lg:flex-col">
         {isDesigning ? (
           <AdCreativeGeneratingCanvas designer={designer} aspectRatio={aspectRatio} />
         ) : result?.imageDataUrl ? (

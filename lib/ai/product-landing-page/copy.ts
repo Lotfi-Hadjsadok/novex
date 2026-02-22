@@ -27,7 +27,8 @@ export const adCopyUserPrompt = `You are an elite direct-response copywriter. Wr
 Write conversion-focused copy for a 3-section landing page.
 {languageLine}
 Price: {price}
-Product name: {productName}`;
+Product name: {productName}
+{customPromptLine}`;
 
 export const adCopyOutputSchema = z.object({
   section_1: z
@@ -60,7 +61,8 @@ export async function generateCopy(
   dialect: ArabicDialect,
   price: string,
   productName: string,
-  productImages: File[]
+  productImages: File[],
+  customPrompt?: string
 ): Promise<z.infer<typeof adCopyOutputSchema>> {
   const imageContentBlocks = await Promise.all(
     productImages.map(async (file) => ({
@@ -81,9 +83,13 @@ export async function generateCopy(
       ? `Language and dialect: ${language} ${dialect}`
       : `Language: ${language}`;
 
+  const customPromptLine = customPrompt?.trim()
+    ? `\n\nAdditional instructions from the user:\n${customPrompt.trim()}`
+    : "";
+
   const structuredCopyModel = copyModel.withStructuredOutput(adCopyOutputSchema);
   const chain = copyPrompt.pipe(structuredCopyModel as any);
-  const copyResult = await chain.invoke({ languageLine, price, productName });
+  const copyResult = await chain.invoke({ languageLine, price, productName, customPromptLine });
 
   return copyResult as z.infer<typeof adCopyOutputSchema>;
 }

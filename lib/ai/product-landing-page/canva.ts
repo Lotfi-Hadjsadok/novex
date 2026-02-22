@@ -18,7 +18,8 @@ export async function generateCanvaImage(
   productImages: File[],
   copy: z.infer<typeof adCopyOutputSchema>,
   features: z.infer<typeof featuresOutputSchema>,
-  designer: DesignerOutput
+  designer: DesignerOutput,
+  customPrompt?: string
 ): Promise<{ imageDataUrl: string | null }> {
 
   const imageContentBlocks = await Promise.all(
@@ -72,6 +73,7 @@ creative_spec: {creativeAgentDirectives}
 raw_copy: {rawCopy}
 raw_features: {rawFeatures}
 designer_tokens: {designerTokens}
+{customPromptLine}
 
 NEGATIVE PROMPT: horizontal dividing line, section border, background seam, color reset, collage, three separate panels, visible join, gradient restart, texture re-anchor, fixed equal thirds, product-in-a-scene, lifestyle-scene-box, environmental-frame-box, scene-within-section, product-in-a-room, isolated-scene-container`;
 
@@ -85,6 +87,10 @@ NEGATIVE PROMPT: horizontal dividing line, section border, background seam, colo
     ["human", canvaUserPrompt],
     ["human", imageContentBlocks],
   ]);
+
+  const customPromptLine = customPrompt?.trim()
+    ? `\n\nAdditional instructions from the user:\n${customPrompt.trim()}`
+    : "";
 
   const chain = canvaPromptTemplate.pipe(canvaModel);
   const response = await chain.invoke({
@@ -110,6 +116,7 @@ NEGATIVE PROMPT: horizontal dividing line, section border, background seam, colo
       features_visual_concepts: features.features.map((featureItem) => ({ text: featureItem.text, visual: featureItem.visual })),
     }),
     section3: JSON.stringify(creative.section_3),
+    customPromptLine,
     rawCopy: JSON.stringify(copy),
     rawFeatures: JSON.stringify(features),
     designerTokens: JSON.stringify({

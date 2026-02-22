@@ -12,11 +12,12 @@ export async function generateCopyAndFeatures(
   language: CopyLanguage,
   dialect: ArabicDialect,
   productName: string,
-  price: string
+  price: string,
+  customPrompt?: string
 ) {
   const [copy, features] = await Promise.all([
-    generateCopy(language, dialect, price, productName, productImages),
-    generateFeatures(language, dialect, productImages),
+    generateCopy(language, dialect, price, productName, productImages, customPrompt),
+    generateFeatures(language, dialect, productImages, undefined, customPrompt),
   ]);
   return { copy, features };
 }
@@ -24,16 +25,18 @@ export async function generateCopyAndFeatures(
 export async function generateDesignerStep(
   copy: z.infer<typeof adCopyOutputSchema>,
   features: z.infer<typeof featuresOutputSchema>,
-  productImages: File[]
+  productImages: File[],
+  customPrompt?: string
 ): Promise<DesignerOutput> {
-  return await generateDesigner(copy, features, productImages);
+  return await generateDesigner(copy, features, productImages, customPrompt);
 }
 
 export async function generateImageStep(
   designer: DesignerOutput,
   copy: z.infer<typeof adCopyOutputSchema>,
   features: z.infer<typeof featuresOutputSchema>,
-  productImages: File[]
+  productImages: File[],
+  customPrompt?: string
 ) {
   const creative = mergeDesignerWithCopyAndFeatures(designer, copy, features);
   const { imageDataUrl } = await generateCanvaImage(
@@ -43,7 +46,8 @@ export async function generateImageStep(
     productImages,
     copy,
     features,
-    designer
+    designer,
+    customPrompt
   );
   return { creative, imageDataUrl };
 }

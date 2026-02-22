@@ -13,6 +13,7 @@ import type { featuresOutputSchema } from "@/lib/ai/product-landing-page/feature
 import type { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -54,13 +55,32 @@ function CopyGeneratingSkeleton() {
     <Card>
       <style>{`
         @keyframes cg-fill {
-          from { transform: scaleX(0); }
-          to { transform: scaleX(1); }
+          0%   { width: 0%; opacity: 0; }
+          8%   { opacity: 1; }
+          45%  { width: var(--fill-pct); }
+          90%  { width: var(--fill-pct); opacity: 1; }
+          100% { width: var(--fill-pct); opacity: 0; }
+        }
+        @keyframes cg-shimmer {
+          0%   { background-position: -200% center; }
+          100% { background-position:  200% center; }
+        }
+        @keyframes cg-pct {
+          0%, 100% { opacity: 0.35; }
+          50%      { opacity: 0.65; }
         }
         .cg-fill-bar {
-          transform-origin: left;
-          animation: cg-fill 1.8s ease-out forwards;
+          width: 0;
+          animation: cg-fill 4s ease-out infinite, cg-shimmer 2s linear infinite;
+          background: linear-gradient(90deg,
+            color-mix(in oklch, var(--primary) 70%, transparent) 0%,
+            var(--primary) 45%,
+            var(--primary) 55%,
+            color-mix(in oklch, var(--primary) 85%, transparent) 100%
+          );
+          background-size: 200% 100%;
         }
+        .cg-pct { animation: cg-pct 2.5s ease-in-out infinite; }
       `}</style>
       <CardHeader>
         <div className="flex items-start gap-3">
@@ -98,16 +118,15 @@ function CopyGeneratingSkeleton() {
                   />
                   <span className="text-sm text-muted-foreground">{label}</span>
                 </div>
-                <span className="text-[10px] tabular-nums text-muted-foreground/50">{pct}%</span>
+                <span className="cg-pct text-[10px] tabular-nums text-muted-foreground/50">{pct}%</span>
               </div>
-              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+              <div
+                className="h-1.5 rounded-full bg-muted overflow-hidden"
+                style={{ '--fill-pct': `${pct}%` } as any}
+              >
                 <div
-                  className="cg-fill-bar h-full rounded-full"
-                  style={{
-                    background: "hsl(var(--primary)/0.6)",
-                    width: `${pct}%`,
-                    animationDelay: `${i * 0.4}s`,
-                  }}
+                  className="cg-fill-bar h-full rounded-full block"
+                  style={{ animationDelay: `${i * 0.4}s` } as any}
                 />
               </div>
             </div>
@@ -165,6 +184,8 @@ export function LandingPageGeneratorForm() {
     setPrice,
     currency,
     setCurrency,
+    customPrompt,
+    setCustomPrompt,
     copyData,
     setCopyData,
     features,
@@ -203,7 +224,8 @@ export function LandingPageGeneratorForm() {
         language,
         dialect,
         productName,
-        formattedPrice
+        formattedPrice,
+        customPrompt?.trim() || undefined
       );
       setCopyData(copy);
       setFeatures(generatedFeatures.features);
@@ -213,9 +235,9 @@ export function LandingPageGeneratorForm() {
   const handleGenerateDesign = () => {
     startDesignTransition(async () => {
       const updatedFeatures: z.infer<typeof featuresOutputSchema> = { features };
-      const generatedDesigner = await generateDesignerStep(copyData!, updatedFeatures, productImages);
+      const generatedDesigner = await generateDesignerStep(copyData!, updatedFeatures, productImages, customPrompt?.trim() || undefined);
       setDesigner(generatedDesigner);
-      const data = await generateImageStep(generatedDesigner, copyData!, updatedFeatures, productImages);
+      const data = await generateImageStep(generatedDesigner, copyData!, updatedFeatures, productImages, customPrompt?.trim() || undefined);
       setDesigner(null);
       setIsImageLoaded(false);
       setResult(data);
@@ -328,35 +350,47 @@ export function LandingPageGeneratorForm() {
                 )}
 
                 {formStep === 3 && (
-                  <Field>
-                    <FieldLabel>
-                      <FieldTitle>Price</FieldTitle>
-                    </FieldLabel>
-                    <div className="flex gap-2">
-                      <Select
-                        value={currency}
-                        onValueChange={(selectedValue) => setCurrency(selectedValue as Currency)}
-                      >
-                        <SelectTrigger className="w-24">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {CURRENCIES.map((currencyOption) => (
-                            <SelectItem key={currencyOption.value} value={currencyOption.value}>
-                              {currencyOption.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        className="flex-1"
-                        type="text"
-                        placeholder="29.99"
-                        value={price}
-                        onChange={(event) => setPrice(event.target.value)}
+                  <>
+                    <Field>
+                      <FieldLabel>
+                        <FieldTitle>Price</FieldTitle>
+                      </FieldLabel>
+                      <div className="flex gap-2">
+                        <Select
+                          value={currency}
+                          onValueChange={(selectedValue) => setCurrency(selectedValue as Currency)}
+                        >
+                          <SelectTrigger className="w-24">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {CURRENCIES.map((currencyOption) => (
+                              <SelectItem key={currencyOption.value} value={currencyOption.value}>
+                                {currencyOption.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Input
+                          className="flex-1"
+                          type="text"
+                          placeholder="29.99"
+                          value={price}
+                          onChange={(event) => setPrice(event.target.value)}
+                        />
+                      </div>
+                    </Field>
+                    <Field>
+                      <FieldLabel>
+                        <FieldTitle>Custom instructions (optional)</FieldTitle>
+                      </FieldLabel>
+                      <Textarea
+                        placeholder="e.g. Emphasize sustainability, target young professionals…"
+                        value={customPrompt}
+                        onChange={(e) => setCustomPrompt(e.target.value)}
                       />
-                    </div>
-                  </Field>
+                    </Field>
+                  </>
                 )}
               </FieldGroup>
             </CardContent>

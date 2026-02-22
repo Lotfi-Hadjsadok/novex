@@ -18,6 +18,7 @@ const initialState = {
   dialect:       "standard" as ArabicDialect,
   price:         "",
   currency:      "DZD" as Currency,
+  customPrompt:  "",
   aspectRatio:   "1:1" as AdAspectRatio,
   copyData:      null as AdCreativeCopy | null,
   designer:      null as AdCreativeDesignerOutput | null,
@@ -32,6 +33,7 @@ type AdCreativeState = typeof initialState & {
   setDialect:       (dialect: ArabicDialect) => void;
   setPrice:         (price: string) => void;
   setCurrency:      (currency: Currency) => void;
+  setCustomPrompt:  (customPrompt: string) => void;
   setAspectRatio:   (ratio: AdAspectRatio) => void;
   setCopyData:      (copy: AdCreativeCopy | null) => void;
   updateCopy:       (field: keyof AdCreativeCopy, value: AdCreativeCopy[keyof AdCreativeCopy]) => void;
@@ -52,6 +54,7 @@ export const useAdCreativeStore = create<AdCreativeState>((set) => ({
   setDialect:       (dialect)  => set({ dialect }),
   setPrice:         (price)    => set({ price }),
   setCurrency:      (currency) => set({ currency }),
+  setCustomPrompt:  (customPrompt) => set({ customPrompt }),
   setAspectRatio:   (ratio)    => set({ aspectRatio: ratio }),
   setCopyData:      (copy)     => set({ copyData: copy }),
   updateCopy: (field, value) =>

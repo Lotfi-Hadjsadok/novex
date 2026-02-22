@@ -49,6 +49,7 @@ Angle strategy: {angleDescription}
 Angle direction: {angleHook}
 
 SIZE FORMAT — {sizeInstruction}
+{customPromptLine}
 
 Generate exactly {count} distinct, non-repetitive copies. Each must take a fresh approach while keeping the same angle.`;
 
@@ -62,7 +63,8 @@ export async function generateAdCopies(
   productName:   string,
   count:         number,
   angle:         CopyAngle,
-  productImages: File[]
+  productImages: File[],
+  customPrompt?: string
 ): Promise<GeneratedCopy[]> {
   const imageContentBlocks = await Promise.all(
     productImages.map(async (file) => ({
@@ -76,6 +78,10 @@ export async function generateAdCopies(
       ? `Language and dialect: Arabic (${dialect})`
       : `Language: ${language === "en" ? "English" : "French"}`;
 
+  const customPromptLine = customPrompt?.trim()
+    ? `\n\nAdditional instructions from the user:\n${customPrompt.trim()}`
+    : "";
+
   const model  = new ChatGoogle("gemini-2.5-flash");
   const prompt = ChatPromptTemplate.fromMessages([
     ["system", systemPrompt],
@@ -88,6 +94,7 @@ export async function generateAdCopies(
 
   const result = await chain.invoke({
     languageLine,
+    customPromptLine,
     tone,
     productName,
     price,

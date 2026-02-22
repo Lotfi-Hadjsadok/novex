@@ -47,15 +47,16 @@ const systemPrompt = `CRITICAL RULES — Analyze product images before writing:
 const userPrompt = `You are an elite direct-response copywriter. Write high-converting, scroll-stopping ad creative copy for a single-panel social media ad. The copy must be punchy, benefit-driven, and immediately clear.
 
 {languageLine}
-Price: {price}
-Product name: {productName}`;
+{priceLine}Product name: {productName}
+{customPromptLine}`;
 
 export async function generateAdCreativeCopy(
   language: CopyLanguage,
   dialect: ArabicDialect,
   price: string,
   productName: string,
-  productImages: File[]
+  productImages: File[],
+  customPrompt?: string
 ): Promise<AdCreativeCopy> {
   const imageContentBlocks = await Promise.all(
     productImages.map(async (file) => ({
@@ -76,8 +77,13 @@ export async function generateAdCreativeCopy(
       ? `Language and dialect: ${language} ${dialect}`
       : `Language: ${language}`;
 
+  const priceLine = price.trim() ? `Price: ${price.trim()}\n` : "";
+  const customPromptLine = customPrompt?.trim()
+    ? `\n\nAdditional instructions from the user:\n${customPrompt.trim()}`
+    : "";
+
   const structured = model.withStructuredOutput(adCreativeCopySchema);
   const chain = prompt.pipe(structured as any);
-  const result = await chain.invoke({ languageLine, price, productName });
+  const result = await chain.invoke({ languageLine, priceLine, productName, customPromptLine });
   return result as AdCreativeCopy;
 }

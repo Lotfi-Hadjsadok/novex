@@ -37,6 +37,7 @@ const userPrompt = `Analyze the uploaded product images and generate 5–6 marke
 Tone to match: {tone}
 Product name: {productName}
 Price: {price}
+{customPromptLine}
 
 Each angle must include a concrete headline preview and hook line in the target language that immediately demonstrates the angle's strategic approach.`;
 
@@ -46,7 +47,8 @@ export async function generateAdCopyAngles(
   tone:          AdCopyTone,
   price:         string,
   productName:   string,
-  productImages: File[]
+  productImages: File[],
+  customPrompt?: string
 ): Promise<CopyAngle[]> {
   const imageContentBlocks = await Promise.all(
     productImages.map(async (file) => ({
@@ -60,6 +62,10 @@ export async function generateAdCopyAngles(
       ? `Language and dialect: Arabic (${dialect})`
       : `Language: ${language === "en" ? "English" : "French"}`;
 
+  const customPromptLine = customPrompt?.trim()
+    ? `\n\nAdditional instructions from the user:\n${customPrompt.trim()}`
+    : "";
+
   const model  = new ChatGoogle("gemini-2.5-flash");
   const prompt = ChatPromptTemplate.fromMessages([
     ["system", systemPrompt],
@@ -69,7 +75,7 @@ export async function generateAdCopyAngles(
 
   const structured = model.withStructuredOutput(anglesOutputSchema);
   const chain      = prompt.pipe(structured as any);
-  const result     = await chain.invoke({ languageLine, tone, price, productName });
+  const result     = await chain.invoke({ languageLine, tone, price, productName, customPromptLine });
 
   const seen = new Set<string>();
   return (result as z.infer<typeof anglesOutputSchema>).angles.filter((a) => {

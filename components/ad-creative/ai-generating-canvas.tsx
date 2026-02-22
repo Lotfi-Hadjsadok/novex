@@ -49,8 +49,15 @@ function DesignSystemSkeleton({ aspectRatio }: { aspectRatio: AdAspectRatio }) {
           100% { background-position:  400% 0; }
         }
         @keyframes ac-fill {
-          from { transform: scaleX(0); }
-          to   { transform: scaleX(1); }
+          0%   { width: 0%; opacity: 0; }
+          8%   { opacity: 1; }
+          45%  { width: var(--fill-pct); }
+          90%  { width: var(--fill-pct); opacity: 1; }
+          100% { width: var(--fill-pct); opacity: 0; }
+        }
+        @keyframes ac-bar-shimmer {
+          0%   { background-position: -200% center; }
+          100% { background-position:  200% center; }
         }
         @keyframes ac-fade-in {
           from { opacity: 0; transform: translateY(6px); }
@@ -74,8 +81,15 @@ function DesignSystemSkeleton({ aspectRatio }: { aspectRatio: AdAspectRatio }) {
         }
         .ac-color-cycle { animation: ac-color-cycle 5s linear infinite; }
         .ac-fill-bar {
-          transform-origin: left;
-          animation: ac-fill 1.6s ease-out forwards;
+          width: 0;
+          animation: ac-fill 4s ease-out infinite, ac-bar-shimmer 2s linear infinite;
+          background: linear-gradient(90deg,
+            color-mix(in oklch, var(--primary) 70%, transparent) 0%,
+            var(--primary) 45%,
+            var(--primary) 55%,
+            color-mix(in oklch, var(--primary) 85%, transparent) 100%
+          );
+          background-size: 200% 100%;
         }
         .ac-task-item { animation: ac-fade-in 0.4s ease-out backwards; }
       `}</style>
@@ -111,10 +125,13 @@ function DesignSystemSkeleton({ aspectRatio }: { aspectRatio: AdAspectRatio }) {
                       style={{ animationDelay: task.delay }}
                     />
                     <span className="text-xs text-foreground/90 flex-1">{task.text}</span>
-                    <div className="w-10 h-1.5 rounded-full bg-muted overflow-hidden shrink-0">
+                    <div
+                      className="w-10 h-1.5 rounded-full bg-muted overflow-hidden shrink-0"
+                      style={{ '--fill-pct': `${task.pct}%` } as any}
+                    >
                       <div
-                        className="ac-fill-bar h-full rounded-full bg-primary"
-                        style={{ width: `${task.pct}%`, animationDelay: `${i * 0.35}s` }}
+                        className="ac-fill-bar h-full rounded-full block"
+                        style={{ animationDelay: `${i * 0.35}s` } as any}
                       />
                     </div>
                   </div>
@@ -156,7 +173,7 @@ const STEP_META = {
   3: {
     label: "Pricing & Format",
     icon:  Tag,
-    description: "Set your price and choose the ad format ratio, then hit Generate.",
+    description: "Set the ad format ratio (and optionally price), then hit Generate.",
   },
 } as const;
 
@@ -180,8 +197,8 @@ function StepPreview({
   const Icon = meta.icon;
   return (
     <div
-      className="mx-auto rounded-xl overflow-hidden border border-primary/15 bg-muted/20 flex items-center justify-center"
-      style={{ aspectRatio: getRatioCssAspect(aspectRatio), maxHeight: "340px" }}
+      className="mx-auto w-full max-w-full rounded-xl overflow-hidden border border-primary/15 bg-muted/20 flex items-center justify-center flex-1 min-h-[320px]"
+      style={{ aspectRatio: getRatioCssAspect(aspectRatio), maxHeight: "420px" }}
     >
       <style>{`
         @keyframes sp-fade-in {
@@ -189,19 +206,33 @@ function StepPreview({
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes sp-fill {
-          from { transform: scaleX(0); }
-          to   { transform: scaleX(1); }
+          0%   { width: 0%; opacity: 0; }
+          8%   { opacity: 1; }
+          45%  { width: var(--fill-pct); }
+          90%  { width: var(--fill-pct); opacity: 1; }
+          100% { width: var(--fill-pct); opacity: 0; }
+        }
+        @keyframes sp-bar-shimmer {
+          0%   { background-position: -200% center; }
+          100% { background-position:  200% center; }
         }
         .sp-instruction { animation: sp-fade-in 0.45s ease-out; }
         .sp-task-item   { animation: sp-fade-in 0.4s ease-out backwards; }
         .sp-fill-bar {
-          transform-origin: left;
-          animation: sp-fill 1.6s ease-out forwards;
+          width: 0;
+          animation: sp-fill 4s ease-out infinite, sp-bar-shimmer 2s linear infinite;
+          background: linear-gradient(90deg,
+            color-mix(in oklch, var(--primary) 70%, transparent) 0%,
+            var(--primary) 45%,
+            var(--primary) 55%,
+            color-mix(in oklch, var(--primary) 85%, transparent) 100%
+          );
+          background-size: 200% 100%;
         }
       `}</style>
 
       {generating ? (
-        <div className="sp-instruction rounded-2xl border border-primary/20 bg-background/85 backdrop-blur-sm px-4 py-4 shadow-md mx-3 w-full max-w-[220px]">
+        <div className="sp-instruction rounded-2xl border border-primary/20 bg-background/85 backdrop-blur-sm px-5 py-5 shadow-md mx-3 w-full max-w-[300px]">
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2 mb-1">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/12 text-primary shrink-0">
@@ -224,10 +255,13 @@ function StepPreview({
                     style={{ animationDelay: task.delay }}
                   />
                   <span className="text-xs text-foreground/90 flex-1">{task.text}</span>
-                  <div className="w-10 h-1.5 rounded-full bg-muted overflow-hidden shrink-0">
+                  <div
+                    className="w-10 h-1.5 rounded-full bg-muted overflow-hidden shrink-0"
+                    style={{ '--fill-pct': `${task.pct}%` } as any}
+                  >
                     <div
-                      className="sp-fill-bar h-full rounded-full bg-primary"
-                      style={{ width: `${task.pct}%`, animationDelay: `${i * 0.35}s` }}
+                      className="sp-fill-bar h-full rounded-full block"
+                      style={{ animationDelay: `${i * 0.35}s` } as any}
                     />
                   </div>
                 </div>
@@ -236,17 +270,17 @@ function StepPreview({
           </div>
         </div>
       ) : (
-        <div className="sp-instruction rounded-2xl border border-primary/20 bg-background/80 backdrop-blur-sm px-4 py-5 shadow-md mx-3 w-full max-w-[200px] text-center">
-          <div className="flex flex-col items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/20">
-              <Icon className="size-5" />
+        <div className="sp-instruction rounded-2xl border border-primary/20 bg-background/80 backdrop-blur-sm px-5 py-6 shadow-md mx-3 w-full max-w-[280px] text-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/20">
+              <Icon className="size-6" />
             </div>
-            <div className="space-y-1">
+            <div className="space-y-2">
               <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary/80">
                 Step {step}
               </p>
-              <h3 className="text-xs font-semibold text-foreground leading-tight">{meta.label}</h3>
-              <p className="text-[10px] leading-relaxed text-muted-foreground">{meta.description}</p>
+              <h3 className="text-sm font-semibold text-foreground leading-tight">{meta.label}</h3>
+              <p className="text-xs leading-relaxed text-muted-foreground">{meta.description}</p>
             </div>
           </div>
         </div>
@@ -361,7 +395,7 @@ export function AdCreativeStepCanvas({
   const Icon = meta.icon;
 
   return (
-    <div className="relative w-full rounded-2xl overflow-hidden select-none border border-border bg-card">
+    <div className="relative w-full flex flex-col flex-1 min-h-[420px] rounded-2xl overflow-hidden select-none border border-border bg-card">
       <style>{`
         .sc2-dot { animation: sc2-dot 2.2s ease-in-out infinite; }
         @keyframes sc2-dot {
@@ -370,7 +404,7 @@ export function AdCreativeStepCanvas({
         }
       `}</style>
 
-      <div className="flex items-center justify-center gap-1 px-4 py-3 border-b border-border bg-muted/50">
+      <div className="flex items-center justify-center gap-1 px-4 py-3 border-b border-border bg-muted/50 shrink-0">
         {([1, 2, 3] as const).map((s) => (
           <div key={s} className="flex items-center">
             <div
@@ -391,11 +425,11 @@ export function AdCreativeStepCanvas({
         ))}
       </div>
 
-      <div className="relative overflow-hidden bg-muted/30 p-3">
+      <div className="relative flex-1 flex items-center justify-center min-h-[320px] overflow-hidden bg-muted/30 p-4">
         <StepPreview step={step} meta={meta} generating={generating} aspectRatio={aspectRatio} />
       </div>
 
-      <div className="border-t border-border px-4 py-3 bg-muted/50">
+      <div className="border-t border-border px-4 py-3 bg-muted/50 shrink-0">
         <div className="flex items-center gap-2.5">
           <Icon className="size-4 shrink-0 text-primary" />
           <span className="text-sm font-medium text-foreground">
@@ -524,58 +558,53 @@ export function AdCreativeGeneratingCanvas({
           ))}
 
           {/* Center content */}
-          <div className="relative flex flex-col items-center justify-center gap-3 px-3 py-4 h-full">
-            <div className="relative w-10 h-10">
-              <div className="ac-ring-pulse absolute inset-0 rounded-full border" style={{ borderColor: `${accentHex}30` }} />
-              <div className="absolute inset-0.5 rounded-full border animate-spin [animation-duration:6s]" style={{ borderColor: `${accentHex}25` }} />
-              <div className="absolute inset-1 rounded-full border animate-spin [animation-duration:3.5s] [animation-direction:reverse]" style={{ borderColor: `${accentHex}40` }} />
-              <div className="absolute inset-1.5 rounded-full border-2 border-transparent animate-spin [animation-duration:2s]" style={{ borderTopColor: accentHex, borderRightColor: `${accentHex}55` }} />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Sparkles className="size-3 animate-pulse [animation-duration:2.5s]" style={{ color: accentHex }} />
+          <div className="relative flex flex-col items-center justify-center px-3 py-4 h-full">
+            <div className="flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md px-4 py-4 shadow-lg">
+              <div className="relative w-10 h-10">
+                <div className="ac-ring-pulse absolute inset-0 rounded-full border" style={{ borderColor: `${accentHex}60` }} />
+                <div className="absolute inset-0.5 rounded-full border animate-spin [animation-duration:6s]" style={{ borderColor: `${accentHex}45` }} />
+                <div className="absolute inset-1 rounded-full border animate-spin [animation-duration:3.5s] [animation-direction:reverse]" style={{ borderColor: `${accentHex}60` }} />
+                <div className="absolute inset-1.5 rounded-full border-2 border-transparent animate-spin [animation-duration:2s]" style={{ borderTopColor: accentHex, borderRightColor: `${accentHex}70` }} />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Sparkles className="size-3 animate-pulse [animation-duration:2.5s]" style={{ color: accentHex }} />
+                </div>
               </div>
-            </div>
 
-            <div className="text-center space-y-0.5">
-              <p className="ac-shimmer-txt font-semibold text-[10px] tracking-wide" style={{ color: textHex }}>
-                Rendering your ad creative
-              </p>
-              <p className="text-[9px]" style={{ color: `${textHex}80` }}>
-                AI is painting your ad…
-              </p>
-            </div>
+              <div className="text-center space-y-0.5">
+                <p className="ac-shimmer-txt font-semibold text-[10px] tracking-wide text-white">
+                  Rendering your ad creative
+                </p>
+                <p className="text-[9px] text-white/60">
+                  AI is painting your ad…
+                </p>
+              </div>
 
-            <div className="flex flex-wrap justify-center gap-1 max-w-full">
-              <span
-                className="flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-medium border"
-                style={{ borderColor: `${accentHex}40`, color: textHex, background: `${accentHex}15` }}
-              >
-                <span className="flex gap-0.5">
-                  {[designer.background_hex, accentHex, designer.primary_text_hex].map((c, i) => (
-                    <span key={i} className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: c, border: `1px solid ${accentHex}40` }} />
-                  ))}
+              <div className="flex flex-wrap justify-center gap-1 max-w-full">
+                <span
+                  className="flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-medium border border-white/15 bg-white/10 text-white"
+                >
+                  <span className="flex gap-0.5">
+                    {[designer.background_hex, accentHex, designer.primary_text_hex].map((c, i) => (
+                      <span key={i} className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: c, border: "1px solid rgba(255,255,255,0.3)" }} />
+                    ))}
+                  </span>
+                  Palette
                 </span>
-                Palette
-              </span>
-              <span
-                className="flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-medium border"
-                style={{ borderColor: `${accentHex}40`, color: textHex, background: `${accentHex}15` }}
-              >
-                <Layers className="size-2.5" />
-                {designer.font_family}
-              </span>
-              <span
-                className="flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-medium border"
-                style={{ borderColor: `${accentHex}40`, color: textHex, background: `${accentHex}15` }}
-              >
-                <Wand2 className="size-2.5" />
-                {aestheticWords}
-              </span>
-            </div>
+                <span className="flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-medium border border-white/15 bg-white/10 text-white">
+                  <Layers className="size-2.5" />
+                  {designer.font_family}
+                </span>
+                <span className="flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-medium border border-white/15 bg-white/10 text-white">
+                  <Wand2 className="size-2.5" />
+                  {aestheticWords}
+                </span>
+              </div>
 
-            <div className="flex gap-1">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="w-1 h-1 rounded-full animate-bounce" style={{ background: accentHex, animationDelay: `${i * 0.18}s` }} />
-              ))}
+              <div className="flex gap-1">
+                {[0, 1, 2].map((i) => (
+                  <div key={i} className="w-1 h-1 rounded-full animate-bounce" style={{ background: accentHex, animationDelay: `${i * 0.18}s` }} />
+                ))}
+              </div>
             </div>
           </div>
 

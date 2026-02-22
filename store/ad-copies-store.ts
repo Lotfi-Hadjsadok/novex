@@ -26,6 +26,7 @@ const initialState = {
   useEmojis:       false,
   price:           "",
   currency:        "DZD"         as Currency,
+  customPrompt:    "",
   copySize:        "medium"      as AdCopySize,
   copyCount:       3             as AdCopyCount,
   angles:          null          as CopyAngle[] | null,
@@ -43,6 +44,7 @@ type AdCopiesState = typeof initialState & {
   setUseEmojis:       (value: boolean) => void;
   setPrice:           (price: string) => void;
   setCurrency:        (currency: Currency) => void;
+  setCustomPrompt:    (customPrompt: string) => void;
   setCopySize:        (size: AdCopySize) => void;
   setCopyCount:       (count: AdCopyCount) => void;
   setAngles:          (angles: CopyAngle[] | null) => void;
@@ -62,6 +64,7 @@ export const useAdCopiesStore = create<AdCopiesState>((set) => ({
   setUseEmojis:       (value)    => set({ useEmojis: value }),
   setPrice:           (price)    => set({ price }),
   setCurrency:        (currency) => set({ currency }),
+  setCustomPrompt:    (customPrompt) => set({ customPrompt }),
   setCopySize:        (size)     => set({ copySize: size }),
   setCopyCount:       (count)    => set({ copyCount: count }),
   setAngles:          (angles)   => set({ angles }),

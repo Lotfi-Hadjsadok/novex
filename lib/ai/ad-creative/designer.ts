@@ -88,14 +88,16 @@ STEP 2 — Single-panel composition:
 Design the layout for a {aspectRatio} canvas. The product is the visual anchor. Text, features, and CTA surround or overlay the product. No dividers, no sections, no horizontal lines.
 
 Ad copy and features (context only):
-{adCopy}`;
+{adCopy}
+{customPromptLine}`;
 
 export async function generateAdCreativeDesigner(
   copy: AdCreativeCopy,
   productImages: File[],
   aspectRatio: AdAspectRatio,
   width: number,
-  height: number
+  height: number,
+  customPrompt?: string
 ): Promise<AdCreativeDesignerOutput> {
   const adCopy = {
     headline:    copy.headline,
@@ -126,11 +128,16 @@ export async function generateAdCreativeDesigner(
   const structuredModel = model.withStructuredOutput(jsonSchema as Record<string, unknown>);
   const chain = promptTemplate.pipe(structuredModel as any);
 
+  const customPromptLine = customPrompt?.trim()
+    ? `\n\nAdditional instructions from the user:\n${customPrompt.trim()}`
+    : "";
+
   const rawResult = await chain.invoke({
     aspectRatio,
     width: String(width),
     height: String(height),
     adCopy: JSON.stringify(adCopy, null, 2),
+    customPromptLine,
   });
 
   const parsed = adCreativeDesignerSchema.parse(rawResult);

@@ -22,7 +22,8 @@ export const featuresUserPrompt = `You are an expert product analyst and visual 
 
 Extract 3–5 key product features.
 {userFeaturesInstruction}
-{languageLine}`;
+{languageLine}
+{customPromptLine}`;
 
 const featureItemSchema = z.object({
   visual: z
@@ -45,7 +46,8 @@ export async function generateFeatures(
   language: CopyLanguage,
   dialect: ArabicDialect,
   productImages: File[],
-  userFeatures?: string[]
+  userFeatures?: string[],
+  customPrompt?: string
 ): Promise<z.infer<typeof featuresOutputSchema>> {
   const imageContentBlocks = await Promise.all(
     productImages.map(async (file) => ({
@@ -68,9 +70,14 @@ export async function generateFeatures(
 
   const structuredFeaturesModel = featuresModel.withStructuredOutput(featuresOutputSchema);
 
+  const customPromptLine = customPrompt?.trim()
+    ? `\n\nAdditional instructions from the user:\n${customPrompt.trim()}`
+    : "";
+
   const chain = featuresPromptTemplate.pipe(structuredFeaturesModel as any);
   const featuresResult = await chain.invoke({
     languageLine,
+    customPromptLine,
     userFeaturesInstruction: userFeatures?.length
       ? `The user has provided these features: ${userFeatures.join(", ")} add more if needed.`
       : "",

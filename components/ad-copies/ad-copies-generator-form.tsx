@@ -20,6 +20,7 @@ import {
 } from "@/types/ad-copies";
 import { Button }   from "@/components/ui/button";
 import { Input }    from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge }    from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -79,8 +80,34 @@ function AnglesGeneratingSkeleton() {
         </CardHeader>
         <CardContent className="space-y-5">
           <style>{`
-            @keyframes acf-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-            .acf-fill-bar { transform-origin: left; animation: acf-fill 1.8s ease-out forwards; }
+            @keyframes acf-fill {
+              0%   { width: 0%; opacity: 0; }
+              8%   { opacity: 1; }
+              45%  { width: var(--fill-pct); }
+              90%  { width: var(--fill-pct); opacity: 1; }
+              100% { width: var(--fill-pct); opacity: 0; }
+            }
+            @keyframes acf-shimmer {
+              0%   { background-position: -200% center; }
+              100% { background-position:  200% center; }
+            }
+            @keyframes acf-pct {
+              0%, 100% { opacity: 0.35; }
+              50%      { opacity: 0.65; }
+            }
+            .acf-fill-bar {
+              width: 0;
+              animation: acf-fill 4s ease-out infinite, acf-shimmer 2s linear infinite;
+              background: linear-gradient(90deg,
+                hsl(var(--primary)/0.5) 0%,
+                hsl(var(--primary)/0.75) 45%,
+                hsl(var(--primary)/0.9) 55%,
+                hsl(var(--primary)/0.75) 65%,
+                hsl(var(--primary)/0.5) 100%
+              );
+              background-size: 200% 100%;
+            }
+            .acf-pct { animation: acf-pct 2.5s ease-in-out infinite; }
           `}</style>
           {(
             [
@@ -98,12 +125,12 @@ function AnglesGeneratingSkeleton() {
                   />
                   <span className="text-sm text-muted-foreground">{label}</span>
                 </div>
-                <span className="text-[10px] tabular-nums text-muted-foreground/50">{pct}%</span>
+                <span className="acf-pct text-[10px] tabular-nums text-muted-foreground/50">{pct}%</span>
               </div>
               <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                 <div
-                  className="acf-fill-bar h-full rounded-full"
-                  style={{ background: "hsl(var(--primary)/0.6)", width: `${pct}%`, animationDelay: `${i * 0.4}s` }}
+                className="acf-fill-bar h-full rounded-full"
+                style={{ '--fill-pct': `${pct}%`, animationDelay: `${i * 0.4}s` } as any}
                 />
               </div>
             </div>
@@ -468,6 +495,7 @@ export function AdCopiesGeneratorForm() {
     useEmojis,       setUseEmojis,
     price,           setPrice,
     currency,        setCurrency,
+    customPrompt,    setCustomPrompt,
     copySize,        setCopySize,
     copyCount,       setCopyCount,
     angles,          setAngles,
@@ -486,7 +514,8 @@ export function AdCopiesGeneratorForm() {
         s.dialect,
         s.tone,
         `${s.price} ${s.currency}`,
-        s.productName
+        s.productName,
+        s.customPrompt?.trim() || undefined
       );
       s.setAngles(result);
       s.setSelectedAngleId(result[0]?.id ?? null);
@@ -510,7 +539,8 @@ export function AdCopiesGeneratorForm() {
         `${s.price} ${s.currency}`,
         s.productName,
         s.copyCount,
-        angle
+        angle,
+        s.customPrompt?.trim() || undefined
       );
       s.setGeneratedCopies(result);
       return null;
@@ -697,6 +727,17 @@ export function AdCopiesGeneratorForm() {
                       <FieldTitle>Number of copies</FieldTitle>
                     </FieldLabel>
                     <CountPicker value={copyCount} onChange={setCopyCount} />
+                  </Field>
+
+                  <Field>
+                    <FieldLabel>
+                      <FieldTitle>Custom instructions (optional)</FieldTitle>
+                    </FieldLabel>
+                    <Textarea
+                      placeholder="e.g. Focus on eco-friendly angle, use urgency…"
+                      value={customPrompt}
+                      onChange={(e) => setCustomPrompt(e.target.value)}
+                    />
                   </Field>
                 </>
               )}

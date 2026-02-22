@@ -19,6 +19,7 @@ const initialState = {
   dialect: "standard" as ArabicDialect,
   price: "",
   currency: "DZD" as Currency,
+  customPrompt: "",
   copyData: null as CopyData | null,
   features: [] as FeatureItem[],
   designer: null as DesignerOutput | null,
@@ -33,6 +34,7 @@ type LandingPageState = typeof initialState & {
   setDialect: (dialect: ArabicDialect) => void;
   setPrice: (price: string) => void;
   setCurrency: (currency: Currency) => void;
+  setCustomPrompt: (customPrompt: string) => void;
   setCopyData: (copyData: CopyData | null) => void;
   setFeatures: (features: FeatureItem[]) => void;
   setDesigner: (designer: DesignerOutput | null) => void;
@@ -54,6 +56,7 @@ export const useLandingPageStore = create<LandingPageState>((set) => ({
   setDialect: (dialect) => set({ dialect }),
   setPrice: (price) => set({ price }),
   setCurrency: (currency) => set({ currency }),
+  setCustomPrompt: (customPrompt) => set({ customPrompt }),
   setCopyData: (copyData) => set({ copyData }),
   setFeatures: (features) => set({ features }),
   setDesigner: (designer) => set({ designer }),

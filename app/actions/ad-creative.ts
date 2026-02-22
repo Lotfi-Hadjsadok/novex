@@ -14,26 +14,29 @@ export async function generateAdCreativeCopyAction(
   language: CopyLanguage,
   dialect: ArabicDialect,
   price: string,
-  productName: string
+  productName: string,
+  customPrompt?: string
 ): Promise<AdCreativeCopy> {
-  return await generateAdCreativeCopy(language, dialect, price, productName, productImages);
+  return await generateAdCreativeCopy(language, dialect, price, productName, productImages, customPrompt);
 }
 
 export async function generateAdCreativeDesignerAction(
   copy: AdCreativeCopy,
   productImages: File[],
-  aspectRatio: AdAspectRatio
+  aspectRatio: AdAspectRatio,
+  customPrompt?: string
 ): Promise<AdCreativeDesignerOutput> {
   const { width, height } = getRatioDimensions(aspectRatio);
-  return await generateAdCreativeDesigner(copy, productImages, aspectRatio, width, height);
+  return await generateAdCreativeDesigner(copy, productImages, aspectRatio, width, height, customPrompt);
 }
 
 export async function generateAdCreativeImageAction(
   designer: AdCreativeDesignerOutput,
   copy: AdCreativeCopy,
   productImages: File[],
-  aspectRatio: AdAspectRatio
+  aspectRatio: AdAspectRatio,
+  customPrompt?: string
 ): Promise<{ imageDataUrl: string | null }> {
   const { width, height } = getRatioDimensions(aspectRatio);
-  return await generateAdCreativeImage(designer, copy, productImages, width, height);
+  return await generateAdCreativeImage(designer, copy, productImages, width, height, customPrompt);
 }

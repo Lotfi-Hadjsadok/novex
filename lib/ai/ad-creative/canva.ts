@@ -9,7 +9,8 @@ export async function generateAdCreativeImage(
   copy: AdCreativeCopy,
   productImages: File[],
   targetWidth: number,
-  targetHeight: number
+  targetHeight: number,
+  customPrompt?: string
 ): Promise<{ imageDataUrl: string | null }> {
   const imageContentBlocks = await Promise.all(
     productImages.map(async (file) => ({
@@ -64,7 +65,8 @@ RENDERING RULES:
 - Features appear as compact pill-shaped labels with subtle background. Legible, minimal.
 - highlighted_words ({highlightedWords}) rendered in {accentHex}
 - Font family: {fontFamily}
-- All copy in {primaryTextHex} unless overridden by design tokens`;
+- All copy in {primaryTextHex} unless overridden by design tokens
+{customPromptLine}`;
 
   const model = new ChatGoogle("gemini-3-pro-image-preview", {
     imageConfig: { imageSize: "2K" },
@@ -75,6 +77,10 @@ RENDERING RULES:
     ["human", userPrompt],
     ["human", imageContentBlocks],
   ]);
+
+  const customPromptLine = customPrompt?.trim()
+    ? `\n\nAdditional instructions from the user:\n${customPrompt.trim()}`
+    : "";
 
   const chain = promptTemplate.pipe(model);
   const response = await chain.invoke({
@@ -110,6 +116,7 @@ RENDERING RULES:
     fontFamily:       designer.font_family,
     highlightedWords: designer.panel.highlighted_words.join(", "),
     productTreatment: designer.panel.product_treatment,
+    customPromptLine,
   });
 
   const blocks = Array.isArray(response.content) ? response.content : [];

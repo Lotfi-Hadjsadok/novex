@@ -50,8 +50,15 @@ function LandingPageSkeleton() {
           100% { background-position:  400% 0; }
         }
         @keyframes lp-fill {
-          from { transform: scaleX(0); }
-          to { transform: scaleX(1); }
+          0%   { width: 0%; opacity: 0; }
+          8%   { opacity: 1; }
+          45%  { width: var(--fill-pct); }
+          90%  { width: var(--fill-pct); opacity: 1; }
+          100% { width: var(--fill-pct); opacity: 0; }
+        }
+        @keyframes lp-bar-shimmer {
+          0%   { background-position: -200% center; }
+          100% { background-position:  200% center; }
         }
         @keyframes lp-fade-in {
           from { opacity: 0; transform: translateY(6px); }
@@ -77,8 +84,15 @@ function LandingPageSkeleton() {
           animation: lp-color-cycle 5s linear infinite;
         }
         .lp-fill-bar {
-          transform-origin: left;
-          animation: lp-fill 1.6s ease-out forwards;
+          width: 0;
+          animation: lp-fill 4s ease-out infinite, lp-bar-shimmer 2s linear infinite;
+          background: linear-gradient(90deg,
+            color-mix(in oklch, var(--primary) 70%, transparent) 0%,
+            var(--primary) 45%,
+            var(--primary) 55%,
+            color-mix(in oklch, var(--primary) 85%, transparent) 100%
+          );
+          background-size: 200% 100%;
         }
         .lp-task-item { animation: lp-fade-in 0.4s ease-out backwards; }
       `}</style>
@@ -107,10 +121,13 @@ function LandingPageSkeleton() {
                     style={{ animationDelay: task.delay }}
                   />
                   <span className="text-xs text-foreground/90 flex-1">{task.text}</span>
-                  <div className="w-14 h-1.5 rounded-full bg-muted overflow-hidden shrink-0">
+                  <div
+                    className="w-14 h-1.5 rounded-full bg-muted overflow-hidden shrink-0"
+                    style={{ '--fill-pct': `${task.pct}%` } as any}
+                  >
                     <div
-                      className="lp-fill-bar h-full rounded-full bg-primary"
-                      style={{ width: `${task.pct}%`, animationDelay: `${i * 0.35}s` }}
+                      className="lp-fill-bar h-full rounded-full block"
+                      style={{ animationDelay: `${i * 0.35}s` } as any}
                     />
                   </div>
                 </div>
@@ -185,14 +202,28 @@ function PagePreviewSkeleton({
           to { opacity: 1; transform: translateY(0); }
         }
         @keyframes pp-fill {
-          from { transform: scaleX(0); }
-          to { transform: scaleX(1); }
+          0%   { width: 0%; opacity: 0; }
+          8%   { opacity: 1; }
+          45%  { width: var(--fill-pct); }
+          90%  { width: var(--fill-pct); opacity: 1; }
+          100% { width: var(--fill-pct); opacity: 0; }
+        }
+        @keyframes pp-bar-shimmer {
+          0%   { background-position: -200% center; }
+          100% { background-position:  200% center; }
         }
         .pp-instruction { animation: pp-fade-in 0.45s ease-out; }
         .pp-task-item { animation: pp-fade-in 0.4s ease-out backwards; }
         .pp-fill-bar {
-          transform-origin: left;
-          animation: pp-fill 1.6s ease-out forwards;
+          width: 0;
+          animation: pp-fill 4s ease-out infinite, pp-bar-shimmer 2s linear infinite;
+          background: linear-gradient(90deg,
+            color-mix(in oklch, var(--primary) 70%, transparent) 0%,
+            var(--primary) 45%,
+            var(--primary) 55%,
+            color-mix(in oklch, var(--primary) 85%, transparent) 100%
+          );
+          background-size: 200% 100%;
         }
       `}</style>
       {generating ? (
@@ -216,10 +247,13 @@ function PagePreviewSkeleton({
                 >
                   <div className="sc-dot w-1.5 h-1.5 rounded-full shrink-0 bg-primary" style={{ animationDelay: task.delay }} />
                   <span className="text-xs text-foreground/90 flex-1">{task.text}</span>
-                  <div className="w-14 h-1.5 rounded-full bg-muted overflow-hidden shrink-0">
+                  <div
+                    className="w-14 h-1.5 rounded-full bg-muted overflow-hidden shrink-0"
+                    style={{ '--fill-pct': `${task.pct}%` } as any}
+                  >
                     <div
-                      className="pp-fill-bar h-full rounded-full bg-primary"
-                      style={{ width: `${task.pct}%`, animationDelay: `${i * 0.35}s` }}
+                      className="pp-fill-bar h-full rounded-full block"
+                      style={{ animationDelay: `${i * 0.35}s` } as any}
                     />
                   </div>
                 </div>
@@ -529,111 +563,79 @@ export function AIGeneratingCanvas({ designer }: AIGeneratingCanvasProps) {
       ))}
 
       {/* Content */}
-      <div className="relative flex flex-col items-center justify-center gap-3 px-3 py-6 h-full">
+      <div className="relative flex flex-col items-center justify-center px-3 py-6 h-full">
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md px-4 py-4 shadow-lg">
 
-        {/* Spinner ring */}
-        <div className="relative w-12 h-12">
-          <div
-            className="ring-pulse absolute inset-0 rounded-full border"
-            style={{ borderColor: `${accentHex}30` }}
-          />
-          <div
-            className="absolute inset-0.5 rounded-full border animate-spin [animation-duration:6s]"
-            style={{ borderColor: `${accentHex}25` }}
-          />
-          <div
-            className="absolute inset-1 rounded-full border animate-spin [animation-duration:3.5s] [animation-direction:reverse]"
-            style={{ borderColor: `${accentHex}40` }}
-          />
-          <div
-            className="absolute inset-1.5 rounded-full border-2 border-transparent animate-spin [animation-duration:2s]"
-            style={{ borderTopColor: accentHex, borderRightColor: `${accentHex}55` }}
-          />
-          <div
-            className="absolute inset-2.5 rounded-full border animate-spin [animation-duration:1.3s] [animation-direction:reverse]"
-            style={{ borderTopColor: accentHex }}
-          />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Sparkles
-              className="size-3 animate-pulse [animation-duration:2.5s]"
-              style={{ color: accentHex }}
-            />
-          </div>
-        </div>
-
-        {/* Labels */}
-        <div className="text-center space-y-0.5">
-          <p
-            className="shimmer-txt font-semibold text-[10px] tracking-wide"
-            style={{ color: textHex }}
-          >
-            Rendering your canvas
-          </p>
-          <p className="text-[9px]" style={{ color: `${textHex}80` }}>
-            AI is painting your landing page image…
-          </p>
-        </div>
-
-        {/* Design tokens */}
-        <div className="flex flex-wrap justify-center gap-1 max-w-full">
-          {/* Color palette swatches */}
-          <span
-            className="flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-medium border"
-            style={{
-              borderColor: `${accentHex}40`,
-              color: textHex,
-              background: `${accentHex}15`,
-            }}
-          >
-            <span className="flex gap-0.5">
-              <span
-                className="inline-block w-1.5 h-1.5 rounded-full"
-                style={{ background: designer.background_hex, border: `1px solid ${accentHex}50` }}
-              />
-              <span
-                className="inline-block w-1.5 h-1.5 rounded-full"
-                style={{ background: accentHex }}
-              />
-              <span
-                className="inline-block w-1.5 h-1.5 rounded-full"
-                style={{ background: designer.primary_text_hex, border: `1px solid ${accentHex}40` }}
-              />
-            </span>
-            Palette
-          </span>
-          <span
-            className="flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-medium border"
-            style={{
-              borderColor: `${accentHex}40`,
-              color: textHex,
-              background: `${accentHex}15`,
-            }}
-          >
-            <Layers className="size-2.5" />
-            {designer.font_family}
-          </span>
-          <span
-            className="flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-medium border"
-            style={{
-              borderColor: `${accentHex}40`,
-              color: textHex,
-              background: `${accentHex}15`,
-            }}
-          >
-            <Wand2 className="size-2.5" />
-            {aestheticWords}
-          </span>
-        </div>
-
-        {/* Dot bounce */}
-        <div className="flex gap-1">
-          {[0, 1, 2].map((i) => (
+          {/* Spinner ring */}
+          <div className="relative w-12 h-12">
             <div
-              key={i}
-              className="w-1 h-1 rounded-full animate-bounce"
-              style={{ background: accentHex, animationDelay: `${i * 0.18}s` }}
+              className="ring-pulse absolute inset-0 rounded-full border"
+              style={{ borderColor: `${accentHex}60` }}
             />
-          ))}
+            <div
+              className="absolute inset-0.5 rounded-full border animate-spin [animation-duration:6s]"
+              style={{ borderColor: `${accentHex}45` }}
+            />
+            <div
+              className="absolute inset-1 rounded-full border animate-spin [animation-duration:3.5s] [animation-direction:reverse]"
+              style={{ borderColor: `${accentHex}60` }}
+            />
+            <div
+              className="absolute inset-1.5 rounded-full border-2 border-transparent animate-spin [animation-duration:2s]"
+              style={{ borderTopColor: accentHex, borderRightColor: `${accentHex}70` }}
+            />
+            <div
+              className="absolute inset-2.5 rounded-full border animate-spin [animation-duration:1.3s] [animation-direction:reverse]"
+              style={{ borderTopColor: accentHex }}
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Sparkles
+                className="size-3 animate-pulse [animation-duration:2.5s]"
+                style={{ color: accentHex }}
+              />
+            </div>
+          </div>
+
+          {/* Labels */}
+          <div className="text-center space-y-0.5">
+            <p className="shimmer-txt font-semibold text-[10px] tracking-wide text-white">
+              Rendering your canvas
+            </p>
+            <p className="text-[9px] text-white/60">
+              AI is painting your landing page image…
+            </p>
+          </div>
+
+          {/* Design tokens */}
+          <div className="flex flex-wrap justify-center gap-1 max-w-full">
+            <span className="flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-medium border border-white/15 bg-white/10 text-white">
+              <span className="flex gap-0.5">
+                <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: designer.background_hex, border: "1px solid rgba(255,255,255,0.3)" }} />
+                <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: accentHex }} />
+                <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: designer.primary_text_hex, border: "1px solid rgba(255,255,255,0.3)" }} />
+              </span>
+              Palette
+            </span>
+            <span className="flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-medium border border-white/15 bg-white/10 text-white">
+              <Layers className="size-2.5" />
+              {designer.font_family}
+            </span>
+            <span className="flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-medium border border-white/15 bg-white/10 text-white">
+              <Wand2 className="size-2.5" />
+              {aestheticWords}
+            </span>
+          </div>
+
+          {/* Dot bounce */}
+          <div className="flex gap-1">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="w-1 h-1 rounded-full animate-bounce"
+                style={{ background: accentHex, animationDelay: `${i * 0.18}s` }}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
